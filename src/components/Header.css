@@ -1,0 +1,137 @@
+.header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 0.8rem 3rem;
+  background-color: #fff;
+  border-bottom: 3px solid #FFD700;
+  position: relative;
+}
+
+.header::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  height: 3px;
+  background: linear-gradient(90deg, #FFD700, #FFA500, #FFD700);
+}
+
+.logo-container {
+  flex: 0 0 auto;
+  padding: 0.5rem 0;
+}
+
+.logo {
+  height: 55px;
+  width: auto;
+  filter: drop-shadow(0 2px 4px rgba(0, 0, 0, 0.1));
+}
+
+.nav-menu {
+  display: flex;
+  align-items: center;
+  gap: 1rem;
+  margin-left: auto;
+}
+
+.nav-link {
+  text-decoration: none;
+  color: #333;
+  font-weight: 600;
+  text-transform: uppercase;
+  font-size: 0.85rem;
+  letter-spacing: 0.5px;
+  padding: 0.8rem 1rem;
+  position: relative;
+  transition: color 0.3s ease;
+}
+
+.nav-link:hover {
+  color: #FFD700;
+}
+
+/* Animated dot under nav items */
+.nav-link::before {
+  content: '•';
+  position: absolute;
+  bottom: 0;
+  left: 50%;
+  transform: translateX(-50%) scale(0);
+  color: #FFD700;
+  transition: transform 0.3s ease;
+}
+
+.nav-link:hover::before {
+  transform: translateX(-50%) scale(1);
+}
+
+/* Special styling for Donate button */
+.nav-link:last-child {
+  background: linear-gradient(135deg, #FFD700, #FFA500);
+  color: #000;
+  border-radius: 25px;
+  padding: 0.6rem 1.5rem;
+  margin-left: 0.5rem;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 1px;
+  border: 2px solid transparent;
+  transition: all 0.3s ease;
+}
+
+.nav-link:last-child:hover {
+  background: #fff;
+  color: #FFD700;
+  border: 2px solid #FFD700;
+}
+
+.nav-link:last-child::before {
+  display: none;
+}
+
+@media (max-width: 1024px) {
+  .header {
+    padding: 0.8rem 2rem;
+  }
+  
+  .nav-menu {
+    gap: 0.5rem;
+  }
+  
+  .nav-link {
+    padding: 0.6rem 0.8rem;
+    font-size: 0.8rem;
+  }
+}
+
+@media (max-width: 768px) {
+  .header {
+    flex-direction: column;
+    padding: 1rem;
+    gap: 1rem;
+  }
+
+  .logo-container {
+    padding: 0;
+  }
+
+  .nav-menu {
+    flex-wrap: wrap;
+    justify-content: center;
+    gap: 0.3rem;
+    width: 100%;
+  }
+
+  .nav-link {
+    padding: 0.5rem 0.7rem;
+    font-size: 0.75rem;
+  }
+
+  .nav-link:last-child {
+    width: 80%;
+    margin: 0.5rem auto 0;
+    text-align: center;
+  }
+} 
