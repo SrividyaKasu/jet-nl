@@ -1,5 +1,6 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useRef } from 'react';
 import { createRegistration, testFirebaseConnection } from '../firebase/registrationService';
+import { useCaptcha } from '../hooks/useCaptcha';
 import './Registration.css';
 
 const Registration = () => {
@@ -19,6 +20,16 @@ const Registration = () => {
   const [success, setSuccess] = useState(false);
   const [confirmationNumber, setConfirmationNumber] = useState(null);
   const [firebaseStatus, setFirebaseStatus] = useState('checking');
+  const [captchaVerified, setCaptchaVerified] = useState(false);
+  const captchaContainer = useRef(null);
+
+  const handleCaptchaVerify = (token) => {
+    console.log('Captcha verified:', token);
+    setCaptchaVerified(true);
+    setError(null);
+  };
+
+  const { renderCaptcha } = useCaptcha(handleCaptchaVerify);
 
   useEffect(() => {
     const checkFirebaseConnection = async () => {
@@ -42,6 +53,12 @@ const Registration = () => {
     checkFirebaseConnection();
   }, []);
 
+  useEffect(() => {
+    if (captchaContainer.current) {
+      renderCaptcha(captchaContainer.current);
+    }
+  }, [renderCaptcha]);
+
   const handleChange = (e) => {
     const { name, value } = e.target;
     setFormData(prev => ({
@@ -53,6 +70,11 @@ const Registration = () => {
   const handleSubmit = async (e) => {
     e.preventDefault();
     
+    if (!captchaVerified) {
+      setError('Please complete the reCAPTCHA verification.');
+      return;
+    }
+
     if (firebaseStatus !== 'connected') {
       setError('Registration service is not available. Please try again later.');
       return;
@@ -69,6 +91,11 @@ const Registration = () => {
     } catch (err) {
       console.error('Registration error:', err);
       setError(err.message || 'An error occurred during registration. Please try again.');
+      // Reset captcha on error
+      if (window.grecaptcha) {
+        window.grecaptcha.reset();
+        setCaptchaVerified(false);
+      }
     } finally {
       setLoading(false);
     }
@@ -88,6 +115,10 @@ const Registration = () => {
     setSuccess(false);
     setConfirmationNumber(null);
     setError(null);
+    setCaptchaVerified(false);
+    if (window.grecaptcha) {
+      window.grecaptcha.reset();
+    }
   };
 
   if (firebaseStatus === 'checking') {
@@ -267,10 +298,12 @@ const Registration = () => {
           </div>
         </div>
 
+        <div className="captcha-container" ref={captchaContainer}></div>
+
         <button 
           type="submit" 
           className={`submit-btn ${loading ? 'loading' : ''}`}
-          disabled={loading || firebaseStatus !== 'connected'}
+          disabled={loading || !captchaVerified || firebaseStatus !== 'connected'}
         >
           {loading ? 'Registering...' : 'Register Now'}
         </button>
