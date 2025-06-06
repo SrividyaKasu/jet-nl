@@ -40,19 +40,6 @@ const Home = () => {
         </div>
       </section>
 
-      <section className="events-section">
-        <h2>Upcoming Events</h2>
-        <div className="event-cards">
-          <div className="event-card">
-            <img src="/images/retreat.jpg" alt="Educational Retreat" />
-            <h3>Educational Retreat and Sri Sudarsana Homam</h3>
-            <p>Amsterdam Region, June 18th 2025</p>
-            <button className="register-btn">Register Now</button>
-          </div>
-          {/* Add more event cards as needed */}
-        </div>
-      </section>
-
       <section className="connect-section">
         <h2>Connect with us</h2>
         <div className="contact-info">
