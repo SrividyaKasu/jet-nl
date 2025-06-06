@@ -45,15 +45,63 @@ const About = () => {
         <div className="global-network">
           <h2>Our Global Network</h2>
           <div className="network-grid">
-            <div className="network-item">JET Australia</div>
-            <div className="network-item">JET India</div>
-            <div className="network-item">JET USA</div>
-            <div className="network-item">JET Canada</div>
-            <div className="network-item">JET Germany</div>
-            <div className="network-item">JET New Zealand</div>
-            <div className="network-item">JET Singapore</div>
-            <div className="network-item">JET Netherlands</div>
-          </div>
+            <a href="https://jaf.org.au/"
+              className="network-item"
+              target="_blank"
+              rel="noopener noreferrer">
+              JET Australia
+            </a>
+            <a href="https://chinnajeeyar.org/"
+                className="network-item"
+                target="_blank"
+                rel="noopener noreferrer">
+                JET India
+              </a>
+              <a href="https://www.jetusa.org/"
+                className="network-item"
+                target="_blank"
+                rel="noopener noreferrer">
+                JET USA
+              </a>
+           
+            
+              <a href="https://www.jettoronto.org/"
+                className="network-item"
+                target="_blank"
+                rel="noopener noreferrer">
+                JET Canada
+              </a>
+          
+           
+              <a href="https://jetgermany.org/"
+                className="network-item"
+                target="_blank"
+                rel="noopener noreferrer">
+                JET Germany
+              </a>
+           
+              <a href="https://jet.org.nz/"
+                className="network-item"
+                target="_blank"
+                rel="noopener noreferrer">
+                JET New Zealand
+              </a>
+         
+              <a href="https://jetsingapore.org/"
+                className="network-item"
+                target="_blank"
+                rel="noopener noreferrer">
+                JET Singapore
+              </a>
+            
+              <a href="https://jetnl.org/"
+                className="network-item"
+                target="_blank"
+                rel="noopener noreferrer">
+                JET Netherlands
+              </a>
+           </div>
+    
         </div>
       </section>
     </div>
