@@ -10,6 +10,7 @@ import Header from './components/Header';
 import Home from './components/Home';
 import About from './components/About';
 import Registration from './components/Registration';
+import Gallery from './components/Gallery';
 import './App.css';
 
 const Layout = () => (
@@ -21,7 +22,7 @@ const Layout = () => (
     <footer className="footer">
       <div className="footer-content">
         <p>© {new Date().getFullYear()} Jeeyar Educational Trust NL</p>
-        <p>A Non-Profit 501 (c)(3) Organization. Federal Tax ID: 36-3977444</p>
+        <p>A Non-Profit 501 (c)(3) Organization.</p>
       </div>
     </footer>
   </div>
@@ -33,6 +34,7 @@ const router = createBrowserRouter(
       <Route path="/" element={<Home />} />
       <Route path="/about" element={<About />} />
       <Route path="/registration" element={<Registration />} />
+      <Route path="/gallery" element={<Gallery />} />
     </Route>
   ),
   {
