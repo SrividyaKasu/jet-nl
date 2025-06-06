@@ -249,6 +249,12 @@
     right: 0;
     bottom: 0;
   }
+
+  .stats-chart-container {
+    height: 300px;
+    margin-bottom: 2rem;
+    padding: 0.5rem;
+  }
 }
 
 @media (max-width: 480px) {
@@ -277,62 +283,74 @@
 /* Stats Table Specific Styles */
 .stats-table-container {
   overflow-x: auto;
-  margin: 1rem 0;
+  margin-top: 0;
 }
 
 .stats-table {
   width: 100%;
-  border-collapse: separate;
-  border-spacing: 0;
-  margin-top: 1rem;
+  border-collapse: collapse;
+  font-size: 1.1rem;
 }
 
 .stats-table th,
 .stats-table td {
-  padding: 1rem 1.5rem;
-  text-align: center;
-  border-bottom: 1px solid #e9ecef;
+  padding: 1rem;
+  text-align: left;
+  border: none;
+}
+
+.stats-table th {
+  color: #333;
+  font-weight: 500;
   white-space: nowrap;
 }
 
-.stats-table th:first-child,
+.stats-table td {
+  color: #333;
+}
+
+/* Align numbers to the center */
+.stats-table td:not(:first-child) {
+  text-align: center;
+}
+
+/* City column */
 .stats-table td:first-child {
-  text-align: left;
-  padding-left: 2rem;
+  font-size: 1.1rem;
 }
 
+/* Total row */
+.stats-table tr:last-child {
+  font-weight: 500;
+}
+
+/* Remove any borders and backgrounds */
+.stats-table tr:hover {
+  background-color: transparent;
+}
+
+.stats-table thead tr,
+.stats-table tbody tr,
+.stats-table tfoot tr {
+  background-color: transparent;
+}
+
+/* Header spacing fix */
 .stats-table th {
-  background-color: #f8f9fa;
-  font-weight: 600;
-  color: #495057;
-  border-bottom: 2px solid #dee2e6;
+  padding-right: 2rem;
 }
 
-.stats-table tbody tr:hover {
-  background-color: #f8f9fa;
+/* Adjust the space between Total Adults and Total Children */
+.stats-table th:nth-child(3) {
+  padding-left: 0;
 }
 
-.stats-table tfoot {
-  font-weight: 600;
-  background-color: #f8f9fa;
-}
-
-.stats-table tfoot td {
-  border-top: 2px solid #dee2e6;
-}
-
-/* Fix header spacing */
-.stats-table th {
-  padding: 1rem 2rem;
-  position: relative;
-}
-
-.stats-table th:not(:first-child)::before {
-  content: '';
-  position: absolute;
-  left: 0;
-  top: 25%;
-  height: 50%;
-  width: 1px;
-  background-color: #dee2e6;
+/* Stats Chart */
+.stats-chart-container {
+  margin-bottom: 3rem;
+  padding: 1rem;
+  background: white;
+  border-radius: 8px;
+  height: 400px;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
 } 

@@ -1,7 +1,27 @@
 import React, { useState, useEffect } from 'react';
 import { collection, getDocs, query } from 'firebase/firestore';
 import { getDb } from '../../firebase/config';
+import {
+  Chart as ChartJS,
+  CategoryScale,
+  LinearScale,
+  BarElement,
+  Title,
+  Tooltip,
+  Legend
+} from 'chart.js';
+import { Bar } from 'react-chartjs-2';
 import './Admin.css';
+
+// Register ChartJS components
+ChartJS.register(
+  CategoryScale,
+  LinearScale,
+  BarElement,
+  Title,
+  Tooltip,
+  Legend
+);
 
 const Stats = () => {
   const [stats, setStats] = useState({});
@@ -63,20 +83,76 @@ const Stats = () => {
     );
   }
 
-  // Calculate totals
-  const totals = Object.values(stats).reduce(
-    (acc, data) => ({
-      totalAdults: acc.totalAdults + data.totalAdults,
-      totalChildren: acc.totalChildren + data.totalChildren,
-      darshan: acc.darshan + data.darshan,
-      pooja: acc.pooja + data.pooja,
-    }),
-    { totalAdults: 0, totalChildren: 0, darshan: 0, pooja: 0 }
-  );
+  // Prepare data for the chart
+  const sortedCities = Object.keys(stats).sort();
+  
+  const chartData = {
+    labels: sortedCities,
+    datasets: [
+      {
+        label: 'Adults',
+        data: sortedCities.map(city => stats[city].totalAdults),
+        backgroundColor: 'rgba(139, 0, 0, 0.7)',
+        borderColor: 'rgba(139, 0, 0, 1)',
+        borderWidth: 1
+      },
+      {
+        label: 'Children',
+        data: sortedCities.map(city => stats[city].totalChildren),
+        backgroundColor: 'rgba(255, 140, 0, 0.7)',
+        borderColor: 'rgba(255, 140, 0, 1)',
+        borderWidth: 1
+      },
+      {
+        label: 'Darshan',
+        data: sortedCities.map(city => stats[city].darshan),
+        backgroundColor: 'rgba(0, 100, 0, 0.7)',
+        borderColor: 'rgba(0, 100, 0, 1)',
+        borderWidth: 1
+      },
+      {
+        label: 'Pooja',
+        data: sortedCities.map(city => stats[city].pooja),
+        backgroundColor: 'rgba(70, 130, 180, 0.7)',
+        borderColor: 'rgba(70, 130, 180, 1)',
+        borderWidth: 1
+      }
+    ]
+  };
+
+  const chartOptions = {
+    responsive: true,
+    maintainAspectRatio: false,
+    plugins: {
+      legend: {
+        position: 'top',
+      },
+      title: {
+        display: false
+      }
+    },
+    scales: {
+      x: {
+        grid: {
+          display: false
+        }
+      },
+      y: {
+        beginAtZero: true,
+        grid: {
+          color: 'rgba(0, 0, 0, 0.1)'
+        }
+      }
+    }
+  };
 
   return (
     <div className="admin-container">
       <h1>Registration Statistics</h1>
+
+      <div className="stats-chart-container">
+        <Bar data={chartData} options={chartOptions} />
+      </div>
       
       <div className="stats-table-container">
         <table className="stats-table">
@@ -94,7 +170,7 @@ const Stats = () => {
               .sort(([a], [b]) => a.localeCompare(b))
               .map(([city, data]) => (
                 <tr key={city}>
-                  <td>{city.charAt(0).toUpperCase() + city.slice(1)}</td>
+                  <td>{city}</td>
                   <td>{data.totalAdults}</td>
                   <td>{data.totalChildren}</td>
                   <td>{data.darshan}</td>
@@ -102,15 +178,6 @@ const Stats = () => {
                 </tr>
               ))}
           </tbody>
-          <tfoot>
-            <tr>
-              <td>Total</td>
-              <td>{totals.totalAdults}</td>
-              <td>{totals.totalChildren}</td>
-              <td>{totals.darshan}</td>
-              <td>{totals.pooja}</td>
-            </tr>
-          </tfoot>
         </table>
       </div>
     </div>
