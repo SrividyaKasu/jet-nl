@@ -1,0 +1,338 @@
+/* Admin Layout */
+.admin-layout {
+  display: flex;
+  min-height: calc(100vh - 70px);
+  background-color: #f8f9fa;
+}
+
+.admin-sidebar {
+  width: 250px;
+  background-color: white;
+  padding: 2rem 1rem;
+  border-right: 1px solid #e9ecef;
+  box-shadow: 2px 0 5px rgba(0, 0, 0, 0.05);
+}
+
+.admin-sidebar h2 {
+  color: var(--primary-color);
+  margin-bottom: 2rem;
+  padding-bottom: 1rem;
+  border-bottom: 2px solid var(--secondary-color);
+}
+
+.admin-nav {
+  display: flex;
+  flex-direction: column;
+  gap: 0.5rem;
+}
+
+.admin-nav-link {
+  padding: 0.8rem 1rem;
+  color: #495057;
+  text-decoration: none;
+  border-radius: 4px;
+  transition: all 0.3s ease;
+}
+
+.admin-nav-link:hover {
+  background-color: #f8f9fa;
+  color: var(--primary-color);
+}
+
+.admin-nav-link.active {
+  background-color: var(--primary-color);
+  color: white;
+}
+
+.admin-content {
+  flex: 1;
+  padding: 2rem;
+  overflow-x: auto;
+}
+
+/* Admin Container */
+.admin-container {
+  background-color: white;
+  border-radius: 8px;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+  padding: 2rem;
+}
+
+.admin-container h1 {
+  color: var(--primary-color);
+  margin-bottom: 2rem;
+}
+
+/* Registrations Table */
+.filter-section {
+  margin-bottom: 2rem;
+}
+
+.location-filter {
+  padding: 0.5rem;
+  border: 1px solid #ddd;
+  border-radius: 4px;
+  margin-left: 1rem;
+  min-width: 200px;
+}
+
+.registrations-table-container {
+  overflow-x: auto;
+  margin: 1rem -1rem;
+  padding: 0 1rem;
+  -webkit-overflow-scrolling: touch;
+}
+
+.registrations-table {
+  width: 100%;
+  border-collapse: separate;
+  border-spacing: 0;
+  background: white;
+  min-width: 800px;
+}
+
+.registrations-table th,
+.registrations-table td {
+  padding: 1rem;
+  text-align: left;
+  border-bottom: 1px solid #e9ecef;
+  white-space: nowrap;
+  font-size: 0.9rem;
+}
+
+.registrations-table th {
+  background-color: #f8f9fa;
+  font-weight: 600;
+  color: #495057;
+  position: sticky;
+  top: 0;
+  z-index: 1;
+  border-bottom: 2px solid #dee2e6;
+}
+
+.registrations-table td {
+  vertical-align: middle;
+}
+
+.registrations-table tbody tr:hover {
+  background-color: #f8f9fa;
+}
+
+/* Column specific widths */
+.registrations-table th:nth-child(1),
+.registrations-table td:nth-child(1) {
+  min-width: 180px;
+}
+
+.registrations-table th:nth-child(2),
+.registrations-table td:nth-child(2) {
+  min-width: 220px;
+}
+
+.registrations-table th:nth-child(3),
+.registrations-table td:nth-child(3) {
+  min-width: 120px;
+}
+
+.registrations-table th:nth-child(4),
+.registrations-table td:nth-child(4) {
+  min-width: 120px;
+}
+
+.registrations-table th:nth-child(5),
+.registrations-table td:nth-child(5) {
+  min-width: 140px;
+}
+
+.registrations-table th:nth-child(6),
+.registrations-table td:nth-child(6) {
+  min-width: 120px;
+}
+
+.registrations-table th:nth-child(7),
+.registrations-table td:nth-child(7),
+.registrations-table th:nth-child(8),
+.registrations-table td:nth-child(8) {
+  min-width: 80px;
+  text-align: center;
+}
+
+.registrations-table th:nth-child(9),
+.registrations-table td:nth-child(9) {
+  min-width: 160px;
+}
+
+.registration-summary {
+  margin-top: 2rem;
+  padding-top: 1rem;
+  border-top: 1px solid #e9ecef;
+  color: #495057;
+}
+
+/* Loading and Error States */
+.loading-message,
+.error-message {
+  text-align: center;
+  padding: 2rem;
+  color: #666;
+}
+
+.error-message {
+  color: var(--error-color);
+}
+
+/* Responsive Design */
+@media (max-width: 1024px) {
+  .admin-sidebar {
+    width: 200px;
+  }
+}
+
+@media (max-width: 768px) {
+  .admin-layout {
+    flex-direction: column;
+  }
+
+  .admin-sidebar {
+    width: 100%;
+    padding: 1rem;
+  }
+
+  .admin-sidebar h2 {
+    margin-bottom: 1rem;
+  }
+
+  .admin-nav {
+    flex-direction: row;
+    gap: 1rem;
+    overflow-x: auto;
+    padding-bottom: 0.5rem;
+  }
+
+  .admin-content {
+    padding: 1rem;
+  }
+
+  .admin-container {
+    padding: 1rem 0.5rem;
+  }
+
+  .stats-table th,
+  .stats-table td,
+  .registrations-table th,
+  .registrations-table td {
+    padding: 0.75rem 0.5rem;
+    font-size: 0.85rem;
+  }
+
+  .location-filter {
+    width: 100%;
+    margin: 0.5rem 0 0 0;
+  }
+
+  .registrations-table-container {
+    margin: 1rem -0.5rem;
+    padding: 0 0.5rem;
+  }
+
+  /* Add horizontal scroll indicator */
+  .registrations-table-container::after {
+    content: '⟷ Scroll horizontally';
+    display: block;
+    text-align: center;
+    padding: 0.5rem;
+    color: #666;
+    font-size: 0.8rem;
+    background: #f8f9fa;
+    position: sticky;
+    left: 0;
+    right: 0;
+    bottom: 0;
+  }
+}
+
+@media (max-width: 480px) {
+  .admin-nav {
+    flex-wrap: wrap;
+  }
+
+  .admin-nav-link {
+    width: 100%;
+    text-align: center;
+  }
+
+  .stats-table,
+  .registrations-table {
+    font-size: 0.85rem;
+  }
+
+  .stats-table th,
+  .stats-table td,
+  .registrations-table th,
+  .registrations-table td {
+    padding: 0.6rem;
+  }
+}
+
+/* Stats Table Specific Styles */
+.stats-table-container {
+  overflow-x: auto;
+  margin: 1rem 0;
+}
+
+.stats-table {
+  width: 100%;
+  border-collapse: separate;
+  border-spacing: 0;
+  margin-top: 1rem;
+}
+
+.stats-table th,
+.stats-table td {
+  padding: 1rem 1.5rem;
+  text-align: center;
+  border-bottom: 1px solid #e9ecef;
+  white-space: nowrap;
+}
+
+.stats-table th:first-child,
+.stats-table td:first-child {
+  text-align: left;
+  padding-left: 2rem;
+}
+
+.stats-table th {
+  background-color: #f8f9fa;
+  font-weight: 600;
+  color: #495057;
+  border-bottom: 2px solid #dee2e6;
+}
+
+.stats-table tbody tr:hover {
+  background-color: #f8f9fa;
+}
+
+.stats-table tfoot {
+  font-weight: 600;
+  background-color: #f8f9fa;
+}
+
+.stats-table tfoot td {
+  border-top: 2px solid #dee2e6;
+}
+
+/* Fix header spacing */
+.stats-table th {
+  padding: 1rem 2rem;
+  position: relative;
+}
+
+.stats-table th:not(:first-child)::before {
+  content: '';
+  position: absolute;
+  left: 0;
+  top: 25%;
+  height: 50%;
+  width: 1px;
+  background-color: #dee2e6;
+} 
