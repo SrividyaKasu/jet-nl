@@ -12,11 +12,19 @@ const firebaseConfig = {
   appId: import.meta.env.VITE_FIREBASE_APP_ID?.trim()
 };
 
-// Initialize Firebase with retry logic
-const initializeFirebase = async (retries = 3) => {
+// Initialize Firebase app
+let app;
+try {
+  app = initializeApp(firebaseConfig);
+} catch (error) {
+  console.error("Error initializing Firebase app:", error);
+  throw error;
+}
+
+// Initialize Firestore with retry logic
+const initializeFirestore = async (retries = 3) => {
   for (let attempt = 1; attempt <= retries; attempt++) {
     try {
-      const app = initializeApp(firebaseConfig);
       const db = getFirestore(app);
       
       // Enable offline persistence
@@ -33,7 +41,7 @@ const initializeFirebase = async (retries = 3) => {
       return db;
     } catch (error) {
       if (attempt === retries) {
-        throw new Error(`Failed to initialize Firebase: ${error.message}`);
+        throw new Error(`Failed to initialize Firestore: ${error.message}`);
       }
       await new Promise(resolve => setTimeout(resolve, Math.pow(2, attempt) * 1000));
     }
@@ -41,10 +49,10 @@ const initializeFirebase = async (retries = 3) => {
 };
 
 // Initialize and export
-let dbPromise = initializeFirebase().catch(error => {
-  console.error('Failed to initialize Firebase:', error.message);
+let dbPromise = initializeFirestore().catch(error => {
+  console.error('Failed to initialize Firestore:', error.message);
   throw error;
 });
 
 export const getDb = async () => await dbPromise;
-export { dbPromise as db }; 
+export { app as default, dbPromise as db }; 
