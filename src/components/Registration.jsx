@@ -1,6 +1,7 @@
 import React, { useState, useEffect, useRef } from 'react';
-import { createRegistration, testFirebaseConnection } from '../firebase/registrationService';
-import { signInWithGoogle, signOutUser, getCurrentUser } from '../firebase/authService';
+import { signInWithGoogle, signOutUser, getCurrentUser, onAuthChange } from '../firebase/authService';
+import { createRegistration } from '../firebase/registrationService';
+import { sendConfirmationEmail } from '../services/emailService';
 import { useCaptcha } from '../hooks/useCaptcha';
 import './Registration.css';
 
@@ -20,58 +21,33 @@ const Registration = () => {
   const [error, setError] = useState(null);
   const [success, setSuccess] = useState(false);
   const [confirmationNumber, setConfirmationNumber] = useState(null);
-  const [firebaseStatus, setFirebaseStatus] = useState('checking');
-  const [captchaVerified, setCaptchaVerified] = useState(false);
   const [user, setUser] = useState(null);
+  const [authInitialized, setAuthInitialized] = useState(false);
   const captchaContainer = useRef(null);
 
   const handleCaptchaVerify = (token) => {
     console.log('Captcha verified:', token);
-    setCaptchaVerified(true);
     setError(null);
   };
 
   const { renderCaptcha } = useCaptcha(handleCaptchaVerify);
 
+  // Initialize auth state listener
   useEffect(() => {
-    const checkAuth = async () => {
-      try {
-        const currentUser = await getCurrentUser();
-        setUser(currentUser);
-        if (currentUser) {
-          setFormData(prev => ({
-            ...prev,
-            name: currentUser.displayName || '',
-            email: currentUser.email || ''
-          }));
-        }
-      } catch (error) {
-        console.error('Auth check failed:', error);
+    const unsubscribe = onAuthChange((currentUser) => {
+      setUser(currentUser);
+      setAuthInitialized(true);
+      
+      if (currentUser) {
+        setFormData(prev => ({
+          ...prev,
+          name: currentUser.displayName || '',
+          email: currentUser.email || ''
+        }));
       }
-    };
-    checkAuth();
-  }, []);
+    });
 
-  useEffect(() => {
-    const checkFirebaseConnection = async () => {
-      try {
-        await testFirebaseConnection();
-        console.log('Firebase connection test passed');
-        setFirebaseStatus('connected');
-      } catch (error) {
-        console.error('Firebase connection test failed:', error);
-        setFirebaseStatus('error');
-        setError(
-          error.code === 'permission-denied' 
-            ? 'Access to the registration service is currently restricted. Please try again later.'
-            : error.code === 'unavailable'
-            ? 'The registration service is temporarily unavailable. Please try again in a few minutes.'
-            : 'Unable to connect to the registration service. Please check your internet connection and try again.'
-        );
-      }
-    };
-
-    checkFirebaseConnection();
+    return () => unsubscribe();
   }, []);
 
   useEffect(() => {
@@ -126,31 +102,22 @@ const Registration = () => {
       return;
     }
 
-    if (!captchaVerified) {
-      setError('Please complete the reCAPTCHA verification.');
-      return;
-    }
-
-    if (firebaseStatus !== 'connected') {
-      setError('Registration service is not available. Please try again later.');
-      return;
-    }
-
     setLoading(true);
     setError(null);
 
     try {
+      // Create registration in Firebase
       const result = await createRegistration(formData);
       console.log('Registration successful:', result);
       setConfirmationNumber(result.confirmationNumber);
+
+      // Send confirmation email using EmailJS
+      await sendConfirmationEmail(formData, result.confirmationNumber);
+      
       setSuccess(true);
     } catch (err) {
       console.error('Registration error:', err);
       setError(err.message || 'An error occurred during registration. Please try again.');
-      if (window.grecaptcha) {
-        window.grecaptcha.reset();
-        setCaptchaVerified(false);
-      }
     } finally {
       setLoading(false);
     }
@@ -170,33 +137,13 @@ const Registration = () => {
     setSuccess(false);
     setConfirmationNumber(null);
     setError(null);
-    setCaptchaVerified(false);
-    if (window.grecaptcha) {
-      window.grecaptcha.reset();
-    }
   };
 
-  if (firebaseStatus === 'checking') {
+  if (!authInitialized) {
     return (
       <div className="registration">
         <div className="loading-message">
-          Connecting to registration service...
-        </div>
-      </div>
-    );
-  }
-
-  if (firebaseStatus === 'error') {
-    return (
-      <div className="registration">
-        <div className="error-message">
-          {error}
-          <button 
-            className="retry-btn"
-            onClick={() => window.location.reload()}
-          >
-            Retry Connection
-          </button>
+          Initializing...
         </div>
       </div>
     );
@@ -385,7 +332,7 @@ const Registration = () => {
             <button 
               type="submit" 
               className={`submit-btn ${loading ? 'loading' : ''}`}
-              disabled={loading || !captchaVerified || firebaseStatus !== 'connected'}
+              disabled={loading}
             >
               {loading ? 'Registering...' : 'Register Now'}
             </button>

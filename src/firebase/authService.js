@@ -1,70 +1,69 @@
 import { 
   getAuth, 
-  GoogleAuthProvider, 
   signInWithPopup, 
+  GoogleAuthProvider, 
   signOut,
   onAuthStateChanged 
 } from 'firebase/auth';
-import app from './config';
+import { getApp } from './config';
 
-// Initialize auth with the existing Firebase app
-const auth = getAuth(app);
+// Initialize auth with our Firebase app
+const getFirebaseAuth = () => {
+  const app = getApp();
+  return getAuth(app);
+};
+
+// Google sign-in provider
 const googleProvider = new GoogleAuthProvider();
 
-// Configure additional Google OAuth scopes (optional)
-googleProvider.addScope('profile');
-googleProvider.addScope('email');
-
+// Sign in with Google
 export const signInWithGoogle = async () => {
   try {
+    const auth = getFirebaseAuth();
     const result = await signInWithPopup(auth, googleProvider);
     return {
-      user: {
-        uid: result.user.uid,
-        email: result.user.email,
-        displayName: result.user.displayName,
-        photoURL: result.user.photoURL
-      }
+      user: result.user,
+      token: await result.user.getIdToken()
     };
   } catch (error) {
-    console.error('Google Sign In Error:', error);
-    if (error.code === 'auth/configuration-not-found') {
-      throw new Error('Google authentication is not properly configured. Please check your Firebase settings.');
-    }
-    throw new Error(error.message);
+    console.error('Google sign in failed:', error);
+    throw new Error(error.message || 'Failed to sign in with Google');
   }
 };
 
+// Sign out
 export const signOutUser = async () => {
   try {
+    const auth = getFirebaseAuth();
     await signOut(auth);
   } catch (error) {
-    throw new Error(error.message);
+    console.error('Sign out failed:', error);
+    throw new Error(error.message || 'Failed to sign out');
   }
 };
 
+// Get current user
 export const getCurrentUser = () => {
   return new Promise((resolve, reject) => {
-    const unsubscribe = onAuthStateChanged(auth,
-      (user) => {
+    try {
+      const auth = getFirebaseAuth();
+      const unsubscribe = onAuthStateChanged(auth, (user) => {
         unsubscribe();
-        if (user) {
-          resolve({
-            uid: user.uid,
-            email: user.email,
-            displayName: user.displayName,
-            photoURL: user.photoURL
-          });
-        } else {
-          resolve(null);
-        }
-      },
-      (error) => {
-        unsubscribe();
-        reject(error);
-      }
-    );
+        resolve(user);
+      }, reject);
+    } catch (error) {
+      reject(error);
+    }
   });
 };
 
-export { auth }; 
+// Listen to auth state changes
+export const onAuthChange = (callback) => {
+  try {
+    const auth = getFirebaseAuth();
+    return onAuthStateChanged(auth, callback);
+  } catch (error) {
+    console.error('Auth state change listener failed:', error);
+    throw new Error(error.message || 'Failed to listen to auth changes');
+  }
+}; 

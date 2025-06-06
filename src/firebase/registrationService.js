@@ -49,6 +49,7 @@ export const createRegistration = async (registrationData) => {
       updatedAt: serverTimestamp()
     };
 
+    // Save registration to Firestore
     const registrationsRef = collection(db, COLLECTION_NAME);
     const docRef = await addDoc(registrationsRef, registrationWithMetadata);
     const confirmationNumber = generateConfirmationNumber(docRef.id, registrationData.eventLocation);
