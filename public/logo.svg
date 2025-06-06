@@ -1,0 +1,14 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<svg width="200" height="200" viewBox="0 0 200 200" version="1.1" xmlns="http://www.w3.org/2000/svg">
+  <!-- Background circle -->
+  <circle cx="100" cy="100" r="95" fill="#8b0000" />
+  
+  <!-- JET text -->
+  <text x="100" y="90" font-family="Arial Black, sans-serif" font-size="48" fill="#FFD700" text-anchor="middle" font-weight="bold">JET</text>
+  
+  <!-- NL text -->
+  <text x="100" y="130" font-family="Arial, sans-serif" font-size="36" fill="#FFD700" text-anchor="middle">NL</text>
+  
+  <!-- Decorative border -->
+  <circle cx="100" cy="100" r="95" fill="none" stroke="#FFD700" stroke-width="3"/>
+</svg> 

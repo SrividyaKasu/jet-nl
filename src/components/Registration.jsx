@@ -1,4 +1,5 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
+import { createRegistration, testFirebaseConnection } from '../firebase/registrationService';
 import './Registration.css';
 
 const Registration = () => {
@@ -13,7 +14,33 @@ const Registration = () => {
     numKids: 0
   });
 
-  const [submitted, setSubmitted] = useState(false);
+  const [loading, setLoading] = useState(false);
+  const [error, setError] = useState(null);
+  const [success, setSuccess] = useState(false);
+  const [confirmationNumber, setConfirmationNumber] = useState(null);
+  const [firebaseStatus, setFirebaseStatus] = useState('checking');
+
+  useEffect(() => {
+    const checkFirebaseConnection = async () => {
+      try {
+        await testFirebaseConnection();
+        console.log('Firebase connection test passed');
+        setFirebaseStatus('connected');
+      } catch (error) {
+        console.error('Firebase connection test failed:', error);
+        setFirebaseStatus('error');
+        setError(
+          error.code === 'permission-denied' 
+            ? 'Access to the registration service is currently restricted. Please try again later.'
+            : error.code === 'unavailable'
+            ? 'The registration service is temporarily unavailable. Please try again in a few minutes.'
+            : 'Unable to connect to the registration service. Please check your internet connection and try again.'
+        );
+      }
+    };
+
+    checkFirebaseConnection();
+  }, []);
 
   const handleChange = (e) => {
     const { name, value } = e.target;
@@ -23,33 +50,84 @@ const Registration = () => {
     }));
   };
 
-  const handleSubmit = (e) => {
+  const handleSubmit = async (e) => {
     e.preventDefault();
-    // Here you would typically send the data to your backend
-    console.log('Form submitted:', formData);
-    setSubmitted(true);
+    
+    if (firebaseStatus !== 'connected') {
+      setError('Registration service is not available. Please try again later.');
+      return;
+    }
+
+    setLoading(true);
+    setError(null);
+
+    try {
+      const result = await createRegistration(formData);
+      console.log('Registration successful:', result);
+      setConfirmationNumber(result.confirmationNumber);
+      setSuccess(true);
+    } catch (err) {
+      console.error('Registration error:', err);
+      setError(err.message || 'An error occurred during registration. Please try again.');
+    } finally {
+      setLoading(false);
+    }
   };
 
-  if (submitted) {
+  const resetForm = () => {
+    setFormData({
+      name: '',
+      email: '',
+      phone: '',
+      city: '',
+      eventLocation: '',
+      programType: 'darshan',
+      numAdults: 1,
+      numKids: 0
+    });
+    setSuccess(false);
+    setConfirmationNumber(null);
+    setError(null);
+  };
+
+  if (firebaseStatus === 'checking') {
+    return (
+      <div className="registration">
+        <div className="loading-message">
+          Connecting to registration service...
+        </div>
+      </div>
+    );
+  }
+
+  if (firebaseStatus === 'error') {
+    return (
+      <div className="registration">
+        <div className="error-message">
+          {error}
+          <button 
+            className="retry-btn"
+            onClick={() => window.location.reload()}
+          >
+            Retry Connection
+          </button>
+        </div>
+      </div>
+    );
+  }
+
+  if (success) {
     return (
       <div className="registration-success">
         <h2>Registration Successful!</h2>
         <p>Thank you for registering with JET NL. We will contact you shortly with further details.</p>
+        <p className="confirmation-number">
+          Your confirmation number: <strong>{confirmationNumber}</strong>
+        </p>
+        <p>Please save this number for future reference.</p>
         <button 
           className="register-again-btn"
-          onClick={() => {
-            setSubmitted(false);
-            setFormData({
-              name: '',
-              email: '',
-              phone: '',
-              city: '',
-              eventLocation: '',
-              programType: 'darshan',
-              numAdults: 1,
-              numKids: 0
-            });
-          }}
+          onClick={resetForm}
         >
           Register Another
         </button>
@@ -64,6 +142,12 @@ const Registration = () => {
         <p>Register for Darshan or Pooja services with JET NL</p>
       </div>
 
+      {error && (
+        <div className="error-message">
+          {error}
+        </div>
+      )}
+
       <form className="registration-form" onSubmit={handleSubmit}>
         <div className="form-group">
           <label htmlFor="name">Full Name *</label>
@@ -75,6 +159,7 @@ const Registration = () => {
             onChange={handleChange}
             required
             placeholder="Enter your full name"
+            disabled={loading}
           />
         </div>
 
@@ -88,6 +173,7 @@ const Registration = () => {
             onChange={handleChange}
             required
             placeholder="Enter your email address"
+            disabled={loading}
           />
         </div>
 
@@ -101,6 +187,7 @@ const Registration = () => {
             onChange={handleChange}
             required
             placeholder="Enter your phone number"
+            disabled={loading}
           />
         </div>
 
@@ -114,6 +201,7 @@ const Registration = () => {
             onChange={handleChange}
             required
             placeholder="Enter your city"
+            disabled={loading}
           />
         </div>
 
@@ -125,6 +213,7 @@ const Registration = () => {
             value={formData.eventLocation}
             onChange={handleChange}
             required
+            disabled={loading}
           >
             <option value="">Select Location</option>
             <option value="amsterdam">Amsterdam</option>
@@ -142,6 +231,7 @@ const Registration = () => {
             value={formData.programType}
             onChange={handleChange}
             required
+            disabled={loading}
           >
             <option value="darshan">Darshan</option>
             <option value="pooja">Pooja</option>
@@ -159,6 +249,7 @@ const Registration = () => {
               onChange={handleChange}
               min="1"
               required
+              disabled={loading}
             />
           </div>
 
@@ -171,12 +262,17 @@ const Registration = () => {
               value={formData.numKids}
               onChange={handleChange}
               min="0"
+              disabled={loading}
             />
           </div>
         </div>
 
-        <button type="submit" className="submit-btn">
-          Register Now
+        <button 
+          type="submit" 
+          className={`submit-btn ${loading ? 'loading' : ''}`}
+          disabled={loading || firebaseStatus !== 'connected'}
+        >
+          {loading ? 'Registering...' : 'Register Now'}
         </button>
       </form>
     </div>
