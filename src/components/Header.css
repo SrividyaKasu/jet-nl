@@ -23,6 +23,12 @@
 .logo-container {
   flex: 0 0 auto;
   padding: 0.5rem 0;
+  min-width: 80px; /* Ensure consistent width for both logos */
+}
+
+.logo-container-right {
+  display: flex;
+  justify-content: flex-end;
 }
 
 .logo {
@@ -73,8 +79,10 @@
 .nav-menu {
   display: flex;
   align-items: center;
-  gap: 1rem;
-  margin-left: auto;
+  gap: 1.5rem;
+  flex: 1;
+  justify-content: center;
+  margin: 0 2rem;
 }
 
 .nav-link {
@@ -87,6 +95,7 @@
   padding: 0.8rem 1rem;
   position: relative;
   transition: color 0.3s ease;
+  white-space: nowrap;
 }
 
 .nav-link:hover {
@@ -162,6 +171,10 @@
     height: 40px;
   }
 
+  .logo-container-right {
+    display: none; /* Hide right logo on mobile */
+  }
+
   .hamburger {
     display: flex;
   }
@@ -178,6 +191,7 @@
     padding: 5rem 2rem;
     transition: right 0.3s ease-in-out;
     box-shadow: -2px 0 5px rgba(0, 0, 0, 0.1);
+    margin: 0;
   }
 
   .nav-menu.active {
