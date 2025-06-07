@@ -21,17 +21,17 @@ const Home = () => {
             </thead>
             <tbody>
               <tr>
-                <td>June 18th 2025</td>
+                <td>July 18th 2025</td>
                 <td>Lakshmi Naryana Pooja</td>
                 <td>Amsterdam Region</td>
               </tr>
               <tr>
-                <td>June 19th 2025</td>
+                <td>July 19th 2025</td>
                 <td>Sita Rama Kalyanam</td>
                 <td>Den Haag</td>
               </tr>
               <tr>
-                <td>June 20th 2025</td>
+                <td>July 20th 2025</td>
                 <td>Kalyanam</td>
                 <td>Eindhoven</td>
               </tr>
