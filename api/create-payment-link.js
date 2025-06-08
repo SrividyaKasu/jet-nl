@@ -75,11 +75,13 @@ export default async function handler(req, res) {
         redirect: { url: `${req.headers.origin}/payment-success` }
       },
       payment_intent_data: {
-        setup_future_usage: 'off_session'
+        setup_future_usage: 'off_session',
+        metadata: {
+          failure_url: `${req.headers.origin}/payment-failed`
+        }
       },
       customer_creation: 'always',
-      ...(email && { customer_email: email }),
-      cancel_url: `${req.headers.origin}/payment-failed`
+      ...(email && { customer_email: email })
     });
 
     console.log('Payment link created successfully:', paymentLink.url);
