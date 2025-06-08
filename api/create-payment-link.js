@@ -74,8 +74,15 @@ export default async function handler(req, res) {
         type: 'redirect',
         redirect: { url: `${req.headers.origin}/payment-success` }
       },
+      payment_intent_data: {
+        setup_future_usage: 'off_session'
+      },
       customer_creation: 'always',
       ...(email && { customer_email: email }),
+      after_submit: {
+        type: 'redirect',
+        redirect: { url: `${req.headers.origin}/payment-failed` }
+      }
     });
 
     console.log('Payment link created successfully:', paymentLink.url);

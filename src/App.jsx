@@ -17,6 +17,8 @@ import Stats from './components/admin/Stats';
 import Registrations from './components/admin/Registrations';
 import './App.css';
 import DonateForm from './components/DonateForm';
+import PaymentSuccess from './components/PaymentSuccess';
+import PaymentFailed from './components/PaymentFailed';
 
 const Layout = () => (
   <div className="app">
@@ -55,6 +57,8 @@ const router = createBrowserRouter(
       <Route path="/registration" element={<Registration />} />
       <Route path="/gallery" element={<Gallery />} />
       <Route path="/donate" element={<DonateForm />} />
+      <Route path="/payment-success" element={<PaymentSuccess />} />
+      <Route path="/payment-failed" element={<PaymentFailed />} />
       
       {/* Admin Routes */}
       <Route
