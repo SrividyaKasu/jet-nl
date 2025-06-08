@@ -16,6 +16,7 @@ import AdminLayout from './components/admin/AdminLayout';
 import Stats from './components/admin/Stats';
 import Registrations from './components/admin/Registrations';
 import './App.css';
+import DonateForm from './components/DonateForm';
 
 const Layout = () => (
   <div className="app">
@@ -53,6 +54,7 @@ const router = createBrowserRouter(
       <Route path="/about" element={<About />} />
       <Route path="/registration" element={<Registration />} />
       <Route path="/gallery" element={<Gallery />} />
+      <Route path="/donate" element={<DonateForm />} />
       
       {/* Admin Routes */}
       <Route
