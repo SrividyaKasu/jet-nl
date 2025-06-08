@@ -15,6 +15,11 @@ const DonateForm = () => {
     setLoading(true);
 
     try {
+      console.log('Submitting donation form:', {
+        amount,
+        email: email || 'not provided'
+      });
+
       const response = await fetch('/api/create-payment-link', {
         method: 'POST',
         headers: {
@@ -27,20 +32,35 @@ const DonateForm = () => {
         }),
       });
 
-      const data = await response.json();
+      const text = await response.text();
+      console.log('Raw API response:', text);
+
+      let data;
+      try {
+        data = JSON.parse(text);
+      } catch (e) {
+        console.error('Failed to parse API response:', e);
+        throw new Error('Invalid response from server: ' + text.substring(0, 100));
+      }
 
       if (!response.ok) {
-        throw new Error(data.error || data.details || 'Failed to create payment link');
+        console.error('API error response:', data);
+        throw new Error(data.details || data.error || 'Failed to create payment link');
       }
 
       if (!data.url) {
+        console.error('Missing URL in response:', data);
         throw new Error('No payment URL received from server');
       }
 
-      // Redirect to Stripe payment page
+      console.log('Redirecting to payment URL:', data.url);
       window.location.href = data.url;
     } catch (err) {
-      console.error('API Error:', err);
+      console.error('Detailed API Error:', {
+        message: err.message,
+        stack: err.stack,
+        name: err.name
+      });
       setError(err.message || 'Something went wrong. Please try again.');
     } finally {
       setLoading(false);

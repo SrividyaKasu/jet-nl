@@ -22,27 +22,51 @@ export default async function handler(req, res) {
   }
 
   try {
+    // Check if Stripe is properly initialized
+    if (!process.env.STRIPE_SECRET_KEY) {
+      console.error('Missing STRIPE_SECRET_KEY environment variable');
+      return res.status(500).json({
+        error: 'Internal Server Error',
+        details: 'Stripe configuration is missing'
+      });
+    }
+
+    console.log('Request body:', req.body);
     const { amount, description, email } = req.body;
 
     // Validate required fields
     if (!amount || !description) {
+      console.error('Missing required fields:', { amount, description });
       return res.status(400).json({ 
         error: 'Bad Request',
         details: 'Amount and description are required'
       });
     }
 
+    // First create a product
+    const product = await stripe.products.create({
+      name: description,
+    });
+
+    // Then create a price for the product
+    const price = await stripe.prices.create({
+      product: product.id,
+      unit_amount: Math.round(amount * 100), // Convert to cents
+      currency: 'eur',
+    });
+
+    // Log the payment link creation attempt
+    console.log('Creating payment link with params:', {
+      priceId: price.id,
+      email: email || 'not provided',
+      origin: req.headers.origin
+    });
+
     // Create a payment link using Stripe
     const paymentLink = await stripe.paymentLinks.create({
       line_items: [
         {
-          price_data: {
-            currency: 'eur',
-            product_data: {
-              name: description,
-            },
-            unit_amount: Math.round(amount * 100), // Convert to cents
-          },
+          price: price.id,
           quantity: 1,
         },
       ],
@@ -50,17 +74,24 @@ export default async function handler(req, res) {
         type: 'redirect',
         redirect: { url: `${req.headers.origin}/payment-success` }
       },
-      automatic_tax: { enabled: true },
       customer_creation: 'always',
       ...(email && { customer_email: email }),
     });
 
+    console.log('Payment link created successfully:', paymentLink.url);
     return res.status(200).json({ url: paymentLink.url });
   } catch (error) {
-    console.error('Error creating payment link:', error);
+    console.error('Detailed error creating payment link:', {
+      message: error.message,
+      type: error.type,
+      stack: error.stack,
+      stripeError: error.raw || 'No raw error data'
+    });
+
     return res.status(500).json({ 
       error: 'Internal Server Error',
-      details: error.message 
+      details: error.message,
+      type: error.type || 'Unknown error type'
     });
   }
 } 
