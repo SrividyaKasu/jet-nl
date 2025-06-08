@@ -1,13 +1,13 @@
 .about {
   max-width: 1200px;
   margin: 0 auto;
-  padding: 2rem;
+  padding: 1.5rem;
 }
 
 .hero-section {
   text-align: center;
-  margin-bottom: 3rem;
-  padding: 4rem 0;
+  margin-bottom: 2rem;
+  padding: 2.5rem 0;
   background: linear-gradient(135deg, #FFD700, #FFA500);
   border-radius: 8px;
   color: #000;
@@ -23,7 +23,7 @@
 .content-section {
   display: flex;
   flex-direction: column;
-  gap: 3rem;
+  gap: 2rem;
 }
 
 .overview {
@@ -31,27 +31,27 @@
 }
 
 .overview p {
-  margin-bottom: 1.5rem;
+  margin-bottom: 1rem;
   color: #333;
 }
 
 .vision-mission {
   display: grid;
   grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
-  gap: 2rem;
-  margin: 2rem 0;
+  gap: 1.5rem;
+  margin: 1rem 0;
 }
 
 .vision, .mission {
   background: white;
-  padding: 2rem;
+  padding: 1.5rem;
   border-radius: 8px;
   box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
 }
 
 .vision h2, .mission h2 {
   color: #8b0000;
-  margin-bottom: 1.5rem;
+  margin-bottom: 1rem;
   font-size: 1.8rem;
 }
 
@@ -61,7 +61,7 @@
 }
 
 .mission li {
-  margin-bottom: 1rem;
+  margin-bottom: 0.75rem;
   padding-left: 1.5rem;
   position: relative;
 }
@@ -77,13 +77,13 @@
 
 .aims {
   background: #f9f9f9;
-  padding: 2rem;
+  padding: 1.5rem;
   border-radius: 8px;
 }
 
 .aims h2 {
   color: #8b0000;
-  margin-bottom: 1.5rem;
+  margin-bottom: 1rem;
   font-size: 1.8rem;
 }
 
@@ -93,7 +93,7 @@
 }
 
 .aims li {
-  margin-bottom: 1rem;
+  margin-bottom: 0.75rem;
   padding-left: 1.5rem;
   position: relative;
 }
@@ -107,24 +107,24 @@
 
 .global-network {
   text-align: center;
-  margin-top: 2rem;
+  margin-top: 1.5rem;
 }
 
 .global-network h2 {
   color: #8b0000;
-  margin-bottom: 2rem;
+  margin-bottom: 1.5rem;
   font-size: 1.8rem;
 }
 
 .network-grid {
   display: grid;
   grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
-  gap: 1.5rem;
+  gap: 1rem;
 }
 
 .network-item {
   background: white;
-  padding: 1.5rem;
+  padding: 1rem;
   border-radius: 8px;
   box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
   transition: transform 0.3s ease;
@@ -141,7 +141,9 @@
   }
 
   .hero-section {
-    padding: 2rem 1rem;
+    padding: 1.5rem 1rem;
+    margin: 0 -1rem 1.5rem;
+    border-radius: 0;
   }
 
   .hero-section h1 {
@@ -154,6 +156,6 @@
 
   .network-grid {
     grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
-    gap: 1rem;
+    gap: 0.75rem;
   }
 } 
