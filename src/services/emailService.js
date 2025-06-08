@@ -1,6 +1,6 @@
 import emailjs from '@emailjs/browser';
 
-const PUBLIC_KEY = 'nmeIxaTnqe2_ZZbZE';
+const PUBLIC_KEY = import.meta.env.VITE_EMAIL_JS_PUBLIC_KEY;
 emailjs.init(PUBLIC_KEY);
 
 export const sendConfirmationEmail = async (registrationData, confirmationNumber) => {
@@ -20,8 +20,8 @@ export const sendConfirmationEmail = async (registrationData, confirmationNumber
     };
 
     const response = await emailjs.send(
-      'service_9dkyu8n',
-      'template_JETNL_reg',
+      import.meta.env.VITE_EMAIL_JS_SERVICE_ID,
+      import.meta.env.VITE_EMAIL_JS_TEMPLATE_ID,
       templateParams,
       PUBLIC_KEY
     );

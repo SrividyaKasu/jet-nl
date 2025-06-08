@@ -276,10 +276,9 @@ const Registration = () => {
                 disabled={loading}
               >
                 <option value="">Select Location</option>
-                <option value="amsterdam">Amsterdam</option>
+                <option value="amstelveen">Amstelveen</option>
                 <option value="denhaag">Den Haag</option>
                 <option value="eindhoven">Eindhoven</option>
-                <option value="rotterdam">Rotterdam</option>
               </select>
             </div>
 
@@ -293,8 +292,8 @@ const Registration = () => {
                 required
                 disabled={loading}
               >
-                <option value="darshan">Darshan</option>
-                <option value="pooja">Pooja</option>
+                <option value="darshan">Darshan (Free)</option>
+                <option value="pooja">Pooja (25 EUR/Family)</option>
               </select>
             </div>
 

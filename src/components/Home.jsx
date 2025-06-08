@@ -23,12 +23,12 @@ const Home = () => {
               <tr>
                 <td>July 18th 2025</td>
                 <td>Lakshmi Naryana Pooja</td>
-                <td>Amsterdam Region</td>
+                <td>US Open Zaal, Bovenkerkerweg 81, 1187 XC Amstelveen</td>
               </tr>
               <tr>
                 <td>July 19th 2025</td>
                 <td>Sita Rama Kalyanam</td>
-                <td>Den Haag</td>
+                <td>ASAN Arya Samaj Nederland, Van der Kunstraat 75, 2521 BA Den Haag</td>
               </tr>
               <tr>
                 <td>July 20th 2025</td>
