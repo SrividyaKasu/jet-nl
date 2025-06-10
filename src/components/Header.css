@@ -117,7 +117,7 @@
   transform: translateX(-50%) scale(1);
 }
 
-/* Special styling for Donate button */
+/* Special styling for Contribute button */
 .nav-link:last-child {
   background: linear-gradient(135deg, #FFD700, #FFA500);
   color: #000;

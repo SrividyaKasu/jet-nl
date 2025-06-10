@@ -17,7 +17,7 @@ const Header = () => {
     <header className="header">
       <div className="logo-container">
         <Link to="/" onClick={closeMenu}>
-          <img src="/images/JETNL-logo.png" alt="JETNL Logo" className="logo" />
+          <img src="/images/JETNetherlands_Logo.png" alt="JETNL Logo" className="logo" />
         </Link>
       </div>
       
@@ -36,12 +36,12 @@ const Header = () => {
         <Link to="/about" className="nav-link" onClick={closeMenu}>About</Link>
         <Link to="/gallery" className="nav-link" onClick={closeMenu}>Gallery</Link>
         <Link to="/registration" className="nav-link" onClick={closeMenu}>Registration</Link>
-        <Link to="/donate" className="nav-link" onClick={closeMenu}>Donate</Link>
+        <Link to="/donate" className="nav-link" onClick={closeMenu}>Contribute</Link>
       </nav>
 
       <div className="logo-container logo-container-right">
         <Link to="/" onClick={closeMenu}>
-          <img src="/images/JETNL-logo.png" alt="JETNL Logo" className="logo" />
+          <img src="/images/JETNetherlands_Logo.png" alt="JETNL Logo" className="logo" />
         </Link>
       </div>
     </header>

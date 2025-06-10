@@ -15,7 +15,7 @@ const DonateForm = () => {
     setLoading(true);
 
     try {
-      console.log('Submitting donation form:', {
+      console.log('Submitting contribution form:', {
         amount,
         email: email || 'not provided'
       });
@@ -27,7 +27,7 @@ const DonateForm = () => {
         },
         body: JSON.stringify({
           amount: parseFloat(amount),
-          description: 'Donation to JET NL',
+          description: 'Contribution to JET NL',
           email: email || undefined,
         }),
       });
@@ -69,7 +69,7 @@ const DonateForm = () => {
 
   return (
     <div className="donate-form">
-      <h2>Make a Donation</h2>
+      <h2>Make a Contribution</h2>
       <p>Your support helps us continue our mission</p>
 
       {error && <div className="error-message">{error}</div>}
@@ -118,7 +118,7 @@ const DonateForm = () => {
           className="submit-button" 
           disabled={loading || !amount}
         >
-          {loading ? 'Processing...' : 'Donate Now'}
+          {loading ? 'Processing...' : 'Contribute'}
         </button>
       </form>
     </div>
