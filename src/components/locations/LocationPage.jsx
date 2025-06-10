@@ -11,6 +11,18 @@ const LocationPage = () => {
   const [registrations, setRegistrations] = useState([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
+  const [totals, setTotals] = useState({ adults: 0, kids: 0 });
+  const [currentPage, setCurrentPage] = useState(1);
+  const registrationsPerPage = 10;
+
+  // Get current registrations
+  const indexOfLastRegistration = currentPage * registrationsPerPage;
+  const indexOfFirstRegistration = indexOfLastRegistration - registrationsPerPage;
+  const currentRegistrations = registrations.slice(indexOfFirstRegistration, indexOfLastRegistration);
+  const totalPages = Math.ceil(registrations.length / registrationsPerPage);
+
+  // Change page
+  const paginate = (pageNumber) => setCurrentPage(pageNumber);
 
   // Validate location and secret
   useEffect(() => {
@@ -57,6 +69,15 @@ const LocationPage = () => {
     }
   }, [location]);
 
+  // Calculate totals when registrations change
+  useEffect(() => {
+    const newTotals = registrations.reduce((acc, reg) => ({
+      adults: acc.adults + (parseInt(reg.numAdults) || 0),
+      kids: acc.kids + (parseInt(reg.numKids) || 0)
+    }), { adults: 0, kids: 0 });
+    setTotals(newTotals);
+  }, [registrations]);
+
   const exportToExcel = () => {
     try {
       const exportData = registrations.map(reg => ({
@@ -101,6 +122,17 @@ const LocationPage = () => {
         </button>
       </div>
 
+      <div className="registration-summary">
+        <div className="summary-item">
+          <span className="summary-label">Total Adults:</span>
+          <span className="summary-value">{totals.adults}</span>
+        </div>
+        <div className="summary-item">
+          <span className="summary-label">Total Children:</span>
+          <span className="summary-value">{totals.kids}</span>
+        </div>
+      </div>
+
       <div className="registrations-table-container">
         <table className="registrations-table">
           <thead>
@@ -116,7 +148,7 @@ const LocationPage = () => {
             </tr>
           </thead>
           <tbody>
-            {registrations.map(reg => (
+            {currentRegistrations.map(reg => (
               <tr key={reg.id}>
                 <td>{reg.name}</td>
                 <td>{reg.email}</td>
@@ -136,6 +168,28 @@ const LocationPage = () => {
           </div>
         )}
       </div>
+
+      {registrations.length > 0 && (
+        <div className="pagination">
+          <button 
+            onClick={() => paginate(currentPage - 1)}
+            disabled={currentPage === 1}
+            className="pagination-button"
+          >
+            Previous
+          </button>
+          <div className="pagination-info">
+            Page {currentPage} of {totalPages}
+          </div>
+          <button 
+            onClick={() => paginate(currentPage + 1)}
+            disabled={currentPage === totalPages}
+            className="pagination-button"
+          >
+            Next
+          </button>
+        </div>
+      )}
     </div>
   );
 };

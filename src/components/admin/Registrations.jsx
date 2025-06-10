@@ -12,6 +12,22 @@ const Registrations = () => {
   const [selectedLocation, setSelectedLocation] = useState('all');
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
+  const [currentPage, setCurrentPage] = useState(1);
+  const registrationsPerPage = 10;
+
+  // Get current registrations
+  const indexOfLastRegistration = currentPage * registrationsPerPage;
+  const indexOfFirstRegistration = indexOfLastRegistration - registrationsPerPage;
+  const currentRegistrations = filteredRegistrations.slice(indexOfFirstRegistration, indexOfLastRegistration);
+  const totalPages = Math.ceil(filteredRegistrations.length / registrationsPerPage);
+
+  // Change page
+  const paginate = (pageNumber) => setCurrentPage(pageNumber);
+
+  // Reset page when location changes
+  useEffect(() => {
+    setCurrentPage(1);
+  }, [selectedLocation]);
 
   useEffect(() => {
     const fetchRegistrations = async () => {
@@ -135,7 +151,7 @@ const Registrations = () => {
             </tr>
           </thead>
           <tbody>
-            {filteredRegistrations.map(reg => (
+            {currentRegistrations.map(reg => (
               <tr key={reg.id}>
                 <td>{reg.name}</td>
                 <td>{reg.email}</td>
@@ -160,6 +176,28 @@ const Registrations = () => {
           </div>
         )}
       </div>
+
+      {filteredRegistrations.length > 0 && (
+        <div className="pagination">
+          <button 
+            onClick={() => paginate(currentPage - 1)}
+            disabled={currentPage === 1}
+            className="pagination-button"
+          >
+            Previous
+          </button>
+          <div className="pagination-info">
+            Page {currentPage} of {totalPages}
+          </div>
+          <button 
+            onClick={() => paginate(currentPage + 1)}
+            disabled={currentPage === totalPages}
+            className="pagination-button"
+          >
+            Next
+          </button>
+        </div>
+      )}
     </div>
   );
 };

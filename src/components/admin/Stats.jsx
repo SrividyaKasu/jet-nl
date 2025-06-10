@@ -209,14 +209,6 @@ const Stats = () => {
                   readOnly
                   onClick={(e) => e.target.select()}
                 />
-                <button
-                  onClick={() => {
-                    navigator.clipboard.writeText(getLocationUrl(location));
-                    // You could add a toast notification here
-                  }}
-                >
-                  Copy
-                </button>
               </div>
             </div>
           ))}
