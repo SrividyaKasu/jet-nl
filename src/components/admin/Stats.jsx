@@ -28,7 +28,12 @@ const Stats = () => {
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
 
-  const locationSecrets = __LOCATION_SECRETS__;
+  // Parse the stringified location secrets
+  const locationSecrets = {
+    amstelveen: import.meta.env.VITE_AMSTELVEEN_SECRET || 'default-amstelveen',
+    denhaag: import.meta.env.VITE_DENHAAG_SECRET || 'default-denhaag',
+    eindhoven: import.meta.env.VITE_EINDHOVEN_SECRET || 'default-eindhoven'
+  };
   
   const getLocationUrl = (location) => {
     const secret = locationSecrets[location.toLowerCase()];

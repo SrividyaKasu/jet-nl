@@ -58,7 +58,7 @@ const router = createBrowserRouter(
       <Route path="/about" element={<About />} />
       <Route path="/registration" element={<Registration />} />
       <Route path="/gallery" element={<Gallery />} />
-      <Route path="/donate" element={<DonateForm />} />
+      <Route path="/contribute" element={<DonateForm />} />
       <Route path="/payment/success" element={<PaymentSuccess />} />
       <Route path="/payment/failed" element={<PaymentFailed />} />
       
