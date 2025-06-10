@@ -28,6 +28,13 @@ const Stats = () => {
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
 
+  const locationSecrets = __LOCATION_SECRETS__;
+  
+  const getLocationUrl = (location) => {
+    const secret = locationSecrets[location.toLowerCase()];
+    return `${window.location.origin}/location/${location}/${secret}`;
+  };
+
   useEffect(() => {
     const fetchStats = async () => {
       try {
@@ -148,37 +155,67 @@ const Stats = () => {
 
   return (
     <div className="admin-container">
-      <h1>Registration Statistics</h1>
+      <h1>Statistics</h1>
 
-      <div className="stats-chart-container">
-        <Bar data={chartData} options={chartOptions} />
+      <div className="stats-section">
+        <h2>Registration Statistics</h2>
+        <div className="stats-chart-container">
+          <Bar data={chartData} options={chartOptions} />
+        </div>
+        
+        <div className="stats-table-container">
+          <table className="stats-table">
+            <thead>
+              <tr>
+                <th>City</th>
+                <th>Total Adults</th>
+                <th>Total Children</th>
+                <th>Darshan Count</th>
+                <th>Pooja Count</th>
+              </tr>
+            </thead>
+            <tbody>
+              {Object.entries(stats)
+                .sort(([a], [b]) => a.localeCompare(b))
+                .map(([city, data]) => (
+                  <tr key={city}>
+                    <td>{city}</td>
+                    <td>{data.totalAdults}</td>
+                    <td>{data.totalChildren}</td>
+                    <td>{data.darshan}</td>
+                    <td>{data.pooja}</td>
+                  </tr>
+                ))}
+            </tbody>
+          </table>
+        </div>
       </div>
-      
-      <div className="stats-table-container">
-        <table className="stats-table">
-          <thead>
-            <tr>
-              <th>City</th>
-              <th>Total Adults</th>
-              <th>Total Children</th>
-              <th>Darshan Count</th>
-              <th>Pooja Count</th>
-            </tr>
-          </thead>
-          <tbody>
-            {Object.entries(stats)
-              .sort(([a], [b]) => a.localeCompare(b))
-              .map(([city, data]) => (
-                <tr key={city}>
-                  <td>{city}</td>
-                  <td>{data.totalAdults}</td>
-                  <td>{data.totalChildren}</td>
-                  <td>{data.darshan}</td>
-                  <td>{data.pooja}</td>
-                </tr>
-              ))}
-          </tbody>
-        </table>
+
+      <div className="location-urls">
+        <h2>Location Pages</h2>
+        <div className="url-list">
+          {Object.keys(locationSecrets).map(location => (
+            <div key={location} className="url-item">
+              <h3>{location.charAt(0).toUpperCase() + location.slice(1)}</h3>
+              <div className="url-display">
+                <input
+                  type="text"
+                  value={getLocationUrl(location)}
+                  readOnly
+                  onClick={(e) => e.target.select()}
+                />
+                <button
+                  onClick={() => {
+                    navigator.clipboard.writeText(getLocationUrl(location));
+                    // You could add a toast notification here
+                  }}
+                >
+                  Copy
+                </button>
+              </div>
+            </div>
+          ))}
+        </div>
       </div>
     </div>
   );

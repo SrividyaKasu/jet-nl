@@ -1,49 +1,35 @@
 import React, { useState, useEffect } from 'react';
-import { collection, getDocs, query, orderBy } from 'firebase/firestore';
-import { getDb } from '../../firebase/config';
+import { collection, query, getDocs } from 'firebase/firestore';
+import { db } from '../../firebase';
+import * as XLSX from 'xlsx';
 import './Admin.css';
 
+const LOCATIONS = ['amstelveen', 'denhaag', 'eindhoven'];
+
 const Registrations = () => {
-  const [registrations, setRegistrations] = useState({});
+  const [registrations, setRegistrations] = useState([]);
+  const [filteredRegistrations, setFilteredRegistrations] = useState([]);
+  const [selectedLocation, setSelectedLocation] = useState('all');
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
-  const [selectedLocation, setSelectedLocation] = useState('all');
 
   useEffect(() => {
     const fetchRegistrations = async () => {
       try {
-        const db = await getDb();
-        const registrationsRef = collection(db, 'registrations');
-        const querySnapshot = await getDocs(
-          query(registrationsRef, orderBy('createdAt', 'desc'))
-        );
+        const q = query(collection(db, 'registrations'));
+        const querySnapshot = await getDocs(q);
+        const data = querySnapshot.docs.map(doc => ({
+          id: doc.id,
+          ...doc.data()
+        }));
         
-        const registrationsByLocation = {
-          all: []
-        };
-        
-        querySnapshot.forEach((doc) => {
-          const data = {
-            id: doc.id,
-            ...doc.data(),
-            createdAt: doc.data().createdAt?.toDate()?.toLocaleString() || 'N/A'
-          };
-          
-          // Add to 'all' category
-          registrationsByLocation.all.push(data);
-          
-          // Add to location-specific category
-          if (!registrationsByLocation[data.eventLocation]) {
-            registrationsByLocation[data.eventLocation] = [];
-          }
-          registrationsByLocation[data.eventLocation].push(data);
-        });
-        
-        setRegistrations(registrationsByLocation);
+        console.log('Fetched registrations:', data); // Debug log
+        setRegistrations(data);
+        setFilteredRegistrations(data);
         setLoading(false);
-      } catch (error) {
-        console.error('Error fetching registrations:', error);
-        setError('Failed to load registrations. Please try again later.');
+      } catch (err) {
+        console.error('Error fetching registrations:', err);
+        setError('Failed to load registrations');
         setLoading(false);
       }
     };
@@ -51,46 +37,86 @@ const Registrations = () => {
     fetchRegistrations();
   }, []);
 
+  // Filter registrations when location selection changes
+  useEffect(() => {
+    if (selectedLocation === 'all') {
+      setFilteredRegistrations(registrations);
+    } else {
+      const filtered = registrations.filter(reg => {
+        // Check both possible field names for location
+        const regLocation = reg.eventLocation || reg.location;
+        return regLocation?.toLowerCase() === selectedLocation.toLowerCase();
+      });
+      console.log('Filtered registrations for', selectedLocation, ':', filtered); // Debug log
+      setFilteredRegistrations(filtered);
+    }
+  }, [selectedLocation, registrations]);
+
+  const exportToExcel = () => {
+    try {
+      // Prepare data for export
+      const exportData = filteredRegistrations.map(reg => ({
+        Name: reg.name,
+        Email: reg.email,
+        Phone: reg.phone,
+        City: reg.city || '',
+        EventLocation: reg.eventLocation || reg.location || '',
+        ProgramType: reg.programType || '',
+        Adults: reg.numAdults || 0,
+        Children: reg.numKids || 0,
+        RegistrationDate: reg.createdAt?.toDate?.().toLocaleDateString() || 
+                         reg.registrationDate?.toDate?.().toLocaleDateString() || 
+                         'N/A'
+      }));
+
+      // Create worksheet
+      const ws = XLSX.utils.json_to_sheet(exportData);
+      
+      // Create workbook
+      const wb = XLSX.utils.book_new();
+      XLSX.utils.book_append_sheet(wb, ws, 'Registrations');
+      
+      // Generate filename with location and date
+      const locationString = selectedLocation === 'all' ? 'all-locations' : selectedLocation;
+      const fileName = `registrations_${locationString}_${new Date().toISOString().split('T')[0]}.xlsx`;
+      
+      // Save file
+      XLSX.writeFile(wb, fileName);
+    } catch (err) {
+      console.error('Error exporting to Excel:', err);
+      setError('Failed to export data');
+    }
+  };
+
   if (loading) {
-    return (
-      <div className="admin-container">
-        <div className="loading-message">Loading registrations...</div>
-      </div>
-    );
+    return <div className="admin-content loading">Loading...</div>;
   }
 
   if (error) {
-    return (
-      <div className="admin-container">
-        <div className="error-message">{error}</div>
-      </div>
-    );
+    return <div className="admin-content error">{error}</div>;
   }
 
-  const displayRegistrations = registrations[selectedLocation] || [];
-
   return (
-    <div className="admin-container">
-      <h1>Registrations List</h1>
-      
-      <div className="filter-section">
-        <label htmlFor="locationFilter">Filter by Event Location: </label>
-        <select
-          id="locationFilter"
-          value={selectedLocation}
-          onChange={(e) => setSelectedLocation(e.target.value)}
-          className="location-filter"
-        >
-          <option value="all">All Locations</option>
-          {Object.keys(registrations)
-            .filter(location => location !== 'all')
-            .sort()
-            .map(location => (
-              <option key={location} value={location}>
-                {location.charAt(0).toUpperCase() + location.slice(1)}
+    <div className="admin-content">
+      <div className="admin-header">
+        <div className="admin-controls">
+          <select 
+            value={selectedLocation} 
+            onChange={(e) => setSelectedLocation(e.target.value)}
+            className="location-filter"
+          >
+            <option value="all">All Locations</option>
+            {LOCATIONS.map(loc => (
+              <option key={loc} value={loc}>
+                {loc.charAt(0).toUpperCase() + loc.slice(1)}
               </option>
             ))}
-        </select>
+          </select>
+          <button onClick={exportToExcel} className="export-button">
+            Export to Excel
+          </button>
+        </div>
+        <h1>Registrations</h1>
       </div>
 
       <div className="registrations-table-container">
@@ -109,25 +135,30 @@ const Registrations = () => {
             </tr>
           </thead>
           <tbody>
-            {displayRegistrations.map((reg) => (
+            {filteredRegistrations.map(reg => (
               <tr key={reg.id}>
                 <td>{reg.name}</td>
                 <td>{reg.email}</td>
                 <td>{reg.phone}</td>
                 <td>{reg.city}</td>
-                <td>{reg.eventLocation}</td>
+                <td>{reg.eventLocation || reg.location}</td>
                 <td>{reg.programType}</td>
-                <td>{reg.numAdults}</td>
-                <td>{reg.numKids}</td>
-                <td>{reg.createdAt}</td>
+                <td>{reg.numAdults || 0}</td>
+                <td>{reg.numKids || 0}</td>
+                <td>
+                  {reg.createdAt?.toDate?.().toLocaleDateString() || 
+                   reg.registrationDate?.toDate?.().toLocaleDateString() || 
+                   'N/A'}
+                </td>
               </tr>
             ))}
           </tbody>
         </table>
-      </div>
-
-      <div className="registration-summary">
-        <p>Total Registrations: {displayRegistrations.length}</p>
+        {filteredRegistrations.length === 0 && (
+          <div className="no-data">
+            No registrations found {selectedLocation !== 'all' ? `for ${selectedLocation}` : ''}
+          </div>
+        )}
       </div>
     </div>
   );

@@ -13,8 +13,10 @@ import About from './components/About';
 import Registration from './components/Registration';
 import Gallery from './components/Gallery';
 import AdminLayout from './components/admin/AdminLayout';
-import Stats from './components/admin/Stats';
+import AdminAuth from './components/admin/AdminAuth';
 import Registrations from './components/admin/Registrations';
+import Stats from './components/admin/Stats';
+import LocationPage from './components/locations/LocationPage';
 import './App.css';
 import DonateForm from './components/DonateForm';
 import PaymentSuccess from './components/PaymentSuccess';
@@ -57,21 +59,25 @@ const router = createBrowserRouter(
       <Route path="/registration" element={<Registration />} />
       <Route path="/gallery" element={<Gallery />} />
       <Route path="/donate" element={<DonateForm />} />
-      <Route path="/payment-success" element={<PaymentSuccess />} />
-      <Route path="/payment-failed" element={<PaymentFailed />} />
+      <Route path="/payment/success" element={<PaymentSuccess />} />
+      <Route path="/payment/failed" element={<PaymentFailed />} />
       
       {/* Admin Routes */}
-      <Route
-        path="/admin"
-        element={
-          <ProtectedRoute>
-            <AdminLayout />
-          </ProtectedRoute>
-        }
-      >
-        <Route index element={<Navigate to="stats" replace />} />
+      <Route path="/admin" element={<AdminLayout />}>
+        {/* Default redirect */}
+        <Route index element={<Navigate to="/admin/auth" replace />} />
+        
+        {/* Authentication */}
+        <Route path="auth" element={<AdminAuth />} />
+        
+        {/* Global Admin Pages */}
         <Route path="stats" element={<Stats />} />
         <Route path="registrations" element={<Registrations />} />
+      </Route>
+
+      {/* Separate Location Pages */}
+      <Route path="/location">
+        <Route path=":location/:secret" element={<LocationPage />} />
       </Route>
     </Route>
   ),
