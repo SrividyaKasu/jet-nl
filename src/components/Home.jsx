@@ -32,7 +32,7 @@ const Home = () => {
               </tr>
               <tr>
                 <td>July 20th 2025</td>
-                <td>Kalyanam</td>
+                <td>Dhanalakshmi Pooja</td>
                 <td>Eindhoven</td>
               </tr>
             </tbody>
@@ -43,7 +43,7 @@ const Home = () => {
       <section className="connect-section">
         <h2>Connect with us</h2>
         <div className="contact-info">
-          <p>📞 +31 (0) 6-XXXX-XXXX</p>
+          <p>📞 +31 (0) 684859730</p>
           <p>✉️ info@jetnl.org</p>
           <p>📍 Amsterdam, Netherlands</p>
         </div>
