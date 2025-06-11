@@ -59,8 +59,8 @@ const router = createBrowserRouter(
       <Route path="/registration" element={<Registration />} />
       <Route path="/gallery" element={<Gallery />} />
       <Route path="/contribute" element={<DonateForm />} />
-      <Route path="/payment/success" element={<PaymentSuccess />} />
-      <Route path="/payment/failed" element={<PaymentFailed />} />
+      <Route path="/payment-success" element={<PaymentSuccess />} />
+      <Route path="/payment-failed" element={<PaymentFailed />} />
       
       {/* Admin Routes */}
       <Route path="/admin" element={<AdminLayout />}>
