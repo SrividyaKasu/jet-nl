@@ -76,7 +76,6 @@ export default async function handler(req, res) {
         redirect: { url: `${req.headers.origin}/payment-success` }
       },
       payment_intent_data: {
-        setup_future_usage: 'off_session',
         metadata: {
           failure_url: `${req.headers.origin}/payment-failed`
         }
