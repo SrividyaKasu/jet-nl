@@ -27,9 +27,9 @@ const LocationPage = () => {
   // Validate location and secret
   useEffect(() => {
     const locationSecrets = {
-      amstelveen: import.meta.env.VITE_AMSTELVEEN_SECRET || 'default-amstelveen',
-      denhaag: import.meta.env.VITE_DENHAAG_SECRET || 'default-denhaag',
-      eindhoven: import.meta.env.VITE_EINDHOVEN_SECRET || 'default-eindhoven'
+      amstelveen: import.meta.env.VITE_AMSTELVEEN_SECRET || 'amstelveen123',
+      denhaag: import.meta.env.VITE_DENHAAG_SECRET || 'denhaag456',
+      eindhoven: import.meta.env.VITE_EINDHOVEN_SECRET || 'eindhoven789'
     };
     
     const validSecret = locationSecrets[location];

@@ -36,7 +36,7 @@ const Header = () => {
         <Link to="/about" className="nav-link" onClick={closeMenu}>About</Link>
         <Link to="/gallery" className="nav-link" onClick={closeMenu}>Gallery</Link>
         <Link to="/registration" className="nav-link" onClick={closeMenu}>Registration</Link>
-        <Link to="/donate" className="nav-link" onClick={closeMenu}>Contribute</Link>
+        <Link to="/contribute" className="nav-link" onClick={closeMenu}>Contribute</Link>
       </nav>
 
       <div className="logo-container logo-container-right">

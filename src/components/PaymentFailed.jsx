@@ -12,7 +12,7 @@ const PaymentFailed = () => {
       <h1>Payment Failed</h1>
       <p className="error-message">{error}</p>
       <div className="action-buttons">
-        <Link to="/donate" className="retry-button">
+        <Link to="/contribute" className="retry-button">
           Try Again
         </Link>
         <Link to="/" className="home-button">
