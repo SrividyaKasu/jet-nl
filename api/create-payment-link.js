@@ -70,7 +70,7 @@ export default async function handler(req, res) {
           quantity: 1,
         },
       ],
-      payment_method_types: ['ideal'],
+      payment_method_types: ['ideal', 'card'],
       after_completion: { 
         type: 'redirect',
         redirect: { url: `${req.headers.origin}/payment-success` }
