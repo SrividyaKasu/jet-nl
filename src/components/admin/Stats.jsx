@@ -28,16 +28,8 @@ const Stats = () => {
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
 
-  // Parse the stringified location secrets
-  const locationSecrets = {
-    amstelveen: import.meta.env.VITE_AMSTELVEEN_SECRET || 'default-amstelveen',
-    denhaag: import.meta.env.VITE_DENHAAG_SECRET || 'default-denhaag',
-    eindhoven: import.meta.env.VITE_EINDHOVEN_SECRET || 'default-eindhoven'
-  };
-  
   const getLocationUrl = (location) => {
-    const secret = locationSecrets[location.toLowerCase()];
-    return `${window.location.origin}/location/${location}/${secret}`;
+    return `${window.location.origin}/location/${location}`;
   };
 
   useEffect(() => {
@@ -193,25 +185,6 @@ const Stats = () => {
                 ))}
             </tbody>
           </table>
-        </div>
-      </div>
-
-      <div className="location-urls">
-        <h2>Location Pages</h2>
-        <div className="url-list">
-          {Object.keys(locationSecrets).map(location => (
-            <div key={location} className="url-item">
-              <h3>{location.charAt(0).toUpperCase() + location.slice(1)}</h3>
-              <div className="url-display">
-                <input
-                  type="text"
-                  value={getLocationUrl(location)}
-                  readOnly
-                  onClick={(e) => e.target.select()}
-                />
-              </div>
-            </div>
-          ))}
         </div>
       </div>
     </div>

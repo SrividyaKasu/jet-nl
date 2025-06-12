@@ -5,7 +5,8 @@ import {
   Route,
   createRoutesFromElements,
   Outlet,
-  Navigate
+  Navigate,
+  useParams
 } from 'react-router-dom';
 import Header from './components/Header';
 import Home from './components/Home';
@@ -13,7 +14,7 @@ import About from './components/About';
 import Registration from './components/Registration';
 import Gallery from './components/Gallery';
 import AdminLayout from './components/admin/AdminLayout';
-import AdminAuth from './components/admin/AdminAuth';
+import AccessAuth from './components/admin/AccessAuth';
 import Registrations from './components/admin/Registrations';
 import Stats from './components/admin/Stats';
 import LocationPage from './components/locations/LocationPage';
@@ -37,23 +38,22 @@ const Layout = () => (
   </div>
 );
 
-// Simple admin authentication check
-const isAdmin = () => {
-  // Replace this with your actual admin authentication logic
-  return true; // For development, always return true
-};
-
-// Protected route component
-const ProtectedRoute = ({ children }) => {
-  if (!isAdmin()) {
-    return <Navigate to="/" replace />;
+// Protected route wrapper for location pages
+const ProtectedLocationRoute = ({ children }) => {
+  const { location } = useParams();
+  const isAuthenticated = sessionStorage.getItem(`auth_${location}`) === 'true';
+  
+  if (!isAuthenticated) {
+    return <Navigate to={`/access/${location}`} replace />;
   }
+  
   return children;
 };
 
 const router = createBrowserRouter(
   createRoutesFromElements(
     <Route element={<Layout />}>
+      {/* Public Pages */}
       <Route path="/" element={<Home />} />
       <Route path="/about" element={<About />} />
       <Route path="/registration" element={<Registration />} />
@@ -61,24 +61,26 @@ const router = createBrowserRouter(
       <Route path="/contribute" element={<DonateForm />} />
       <Route path="/payment-success" element={<PaymentSuccess />} />
       <Route path="/payment-failed" element={<PaymentFailed />} />
-      
+
       {/* Admin Routes */}
       <Route path="/admin" element={<AdminLayout />}>
-        {/* Default redirect */}
-        <Route index element={<Navigate to="/admin/auth" replace />} />
-        
-        {/* Authentication */}
-        <Route path="auth" element={<AdminAuth />} />
-        
-        {/* Global Admin Pages */}
+        <Route index element={<Navigate to="/access/admin" replace />} />
         <Route path="stats" element={<Stats />} />
         <Route path="registrations" element={<Registrations />} />
       </Route>
 
-      {/* Separate Location Pages */}
-      <Route path="/location">
-        <Route path=":location/:secret" element={<LocationPage />} />
-      </Route>
+      {/* Location Pages */}
+      <Route 
+        path="/location/:location" 
+        element={
+          <ProtectedLocationRoute>
+            <LocationPage />
+          </ProtectedLocationRoute>
+        } 
+      />
+
+      {/* Authentication Routes */}
+      <Route path="/access/:type" element={<AccessAuth />} />
     </Route>
   ),
   {

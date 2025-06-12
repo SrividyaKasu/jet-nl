@@ -2,12 +2,11 @@ import React, { useState, useEffect } from 'react';
 import { collection, query, where, getDocs } from 'firebase/firestore';
 import { db } from '../../firebase';
 import * as XLSX from 'xlsx';
-import { useParams, useNavigate } from 'react-router-dom';
+import { useParams } from 'react-router-dom';
 import './LocationPage.css';
 
 const LocationPage = () => {
-  const { location, secret } = useParams();
-  const navigate = useNavigate();
+  const { location } = useParams();
   const [registrations, setRegistrations] = useState([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
@@ -24,22 +23,6 @@ const LocationPage = () => {
   // Change page
   const paginate = (pageNumber) => setCurrentPage(pageNumber);
 
-  // Validate location and secret
-  useEffect(() => {
-    const locationSecrets = {
-      amstelveen: import.meta.env.VITE_AMSTELVEEN_SECRET || 'amstelveen123',
-      denhaag: import.meta.env.VITE_DENHAAG_SECRET || 'denhaag456',
-      eindhoven: import.meta.env.VITE_EINDHOVEN_SECRET || 'eindhoven789'
-    };
-    
-    const validSecret = locationSecrets[location];
-    
-    if (!validSecret || validSecret !== secret) {
-      navigate('/404');
-      return;
-    }
-  }, [location, secret, navigate]);
-
   useEffect(() => {
     const fetchRegistrations = async () => {
       try {
@@ -54,7 +37,6 @@ const LocationPage = () => {
           ...doc.data()
         }));
         
-        console.log('Fetched registrations for location:', location, data);
         setRegistrations(data);
         setLoading(false);
       } catch (err) {
