@@ -79,7 +79,9 @@ export default async function handler(req, res) {
         metadata: {
           failure_url: `${req.headers.origin}/payment-failed`
         }
-      }
+      },
+      customer_creation: 'always',
+      ...(email && { customer_email: email })
     });
 
     console.log('Payment link created successfully:', paymentLink.url);
