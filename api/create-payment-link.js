@@ -80,8 +80,7 @@ export default async function handler(req, res) {
           failure_url: `${req.headers.origin}/payment-failed`
         }
       },
-      customer_creation: 'always',
-      ...(email && { customer_email: email })
+      customer_creation: 'always'
     });
 
     console.log('Payment link created successfully:', paymentLink.url);
