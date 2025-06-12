@@ -1,4 +1,4 @@
-import React, { useEffect } from 'react';
+import React, { useEffect, useState } from 'react';
 import { Link } from 'react-router-dom';
 import { collection, addDoc, serverTimestamp } from 'firebase/firestore';
 import { db } from '../firebase';
@@ -6,6 +6,9 @@ import { sendConfirmationEmail } from '../services/emailService';
 import './PaymentSuccess.css';
 
 const PaymentSuccess = () => {
+  const [registrationSuccess, setRegistrationSuccess] = useState(false);
+  const [confirmationNumber, setConfirmationNumber] = useState(null);
+
   useEffect(() => {
     const processRegistration = async () => {
       const pending = sessionStorage.getItem('pendingRegistration');
@@ -19,6 +22,8 @@ const PaymentSuccess = () => {
           });
           // Send confirmation email
           await sendConfirmationEmail(formData, docRef.id);
+          setRegistrationSuccess(true);
+          setConfirmationNumber(docRef.id);
         } catch (err) {
           // Optionally handle error (show message, etc.)
           console.error('Error processing registration after payment:', err);
@@ -36,6 +41,13 @@ const PaymentSuccess = () => {
       <h1>Thank You!</h1>
       <p>Your contribution has been successfully processed.</p>
       <p>We truly appreciate your support.</p>
+      {registrationSuccess && (
+        <div className="registration-success-message">
+          <h2>Registration Successful!</h2>
+          {confirmationNumber && <p>Your confirmation number is: {confirmationNumber}</p>}
+          <p>A confirmation email has been sent to your email address.</p>
+        </div>
+      )}
       <Link to="/" className="home-button">
         Return to Home
       </Link>
