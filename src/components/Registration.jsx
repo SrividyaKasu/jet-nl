@@ -116,22 +116,34 @@ const Registration = () => {
     setError(null);
 
     try {
-      if (formData.wantsToContribute) {
-        // Create payment link for contribution
+      let amount = 0;
+      const isPooja = formData.programType === 'pooja';
+      const hasCustom = formData.wantsToContribute && formData.contributionAmount;
+
+      if (isPooja && hasCustom) {
+        amount = 25 + parseFloat(formData.contributionAmount);
+      } else if (isPooja) {
+        amount = 25;
+      } else if (hasCustom) {
+        amount = parseFloat(formData.contributionAmount);
+      }
+
+      if (amount > 0) {
+        // Create payment link for the calculated amount
         const response = await fetch('/api/create-payment-link', {
           method: 'POST',
           headers: {
             'Content-Type': 'application/json',
           },
           body: JSON.stringify({
-            amount: parseFloat(formData.contributionAmount),
-            description: `Registration with contribution for ${formData.eventLocation}`,
+            amount,
+            description: `Registration for ${formData.eventLocation} (${formData.programType})`,
             email: formData.email
           }),
         });
 
         const data = await response.json();
-        
+
         if (!response.ok) {
           throw new Error(data.details || data.error || 'Failed to create payment link');
         }
@@ -142,13 +154,13 @@ const Registration = () => {
 
         // Store registration data in session storage
         sessionStorage.setItem('pendingRegistration', JSON.stringify(formData));
-        
+
         // Redirect to Stripe payment page
         window.location.href = data.url;
         return;
       }
 
-      // If no contribution, proceed with normal registration
+      // If no payment needed, proceed with normal registration
       const docRef = await addDoc(collection(db, 'registrations'), {
         ...formData,
         createdAt: serverTimestamp()
@@ -158,7 +170,7 @@ const Registration = () => {
       await sendConfirmationEmail(formData, docRef.id);
       setConfirmationNumber(docRef.id);
       setSuccess(true);
-      
+
       // Reset form
       setFormData({
         name: '',
