@@ -1,8 +1,35 @@
-import React from 'react';
+import React, { useEffect } from 'react';
 import { Link } from 'react-router-dom';
+import { collection, addDoc, serverTimestamp } from 'firebase/firestore';
+import { db } from '../firebase';
+import { sendConfirmationEmail } from '../services/emailService';
 import './PaymentSuccess.css';
 
 const PaymentSuccess = () => {
+  useEffect(() => {
+    const processRegistration = async () => {
+      const pending = sessionStorage.getItem('pendingRegistration');
+      if (pending) {
+        const formData = JSON.parse(pending);
+        try {
+          // Save to Firestore
+          const docRef = await addDoc(collection(db, 'registrations'), {
+            ...formData,
+            createdAt: serverTimestamp()
+          });
+          // Send confirmation email
+          await sendConfirmationEmail(formData, docRef.id);
+        } catch (err) {
+          // Optionally handle error (show message, etc.)
+          console.error('Error processing registration after payment:', err);
+        }
+        // Remove from sessionStorage
+        sessionStorage.removeItem('pendingRegistration');
+      }
+    };
+    processRegistration();
+  }, []);
+
   return (
     <div className="payment-success">
       <div className="success-icon">✓</div>
