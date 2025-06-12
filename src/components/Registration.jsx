@@ -25,6 +25,15 @@ const Registration = () => {
   const [authInitialized, setAuthInitialized] = useState(false);
   const captchaContainer = useRef(null);
 
+  const programTypeOptions = {
+    amstelveen: [{ value: 'pooja', label: 'Lakshmi Naryana Pooja' }],
+    eindhoven: [{ value: 'pooja', label: 'Sita Rama Kalyanam' }],
+    denhaag: [{ value: 'pooja', label: 'Dhanalakshmi Pooja' }]
+  };
+
+  const availableProgramTypes = programTypeOptions[formData.eventLocation] || [];
+
+
   const handleCaptchaVerify = (token) => {
     console.log('Captcha verified:', token);
     setError(null);
@@ -37,7 +46,7 @@ const Registration = () => {
     const unsubscribe = onAuthChange((currentUser) => {
       setUser(currentUser);
       setAuthInitialized(true);
-      
+
       if (currentUser) {
         setFormData(prev => ({
           ...prev,
@@ -96,7 +105,7 @@ const Registration = () => {
 
   const handleSubmit = async (e) => {
     e.preventDefault();
-    
+
     if (!user) {
       setError('Please sign in with Google first.');
       return;
@@ -113,7 +122,7 @@ const Registration = () => {
 
       // Send confirmation email using EmailJS
       await sendConfirmationEmail(formData, result.confirmationNumber);
-      
+
       setSuccess(true);
     } catch (err) {
       console.error('Registration error:', err);
@@ -158,7 +167,7 @@ const Registration = () => {
           Your confirmation number: <strong>{confirmationNumber}</strong>
         </p>
         <p>Please save this number for future reference.</p>
-        <button 
+        <button
           className="register-again-btn"
           onClick={resetForm}
         >
@@ -184,7 +193,7 @@ const Registration = () => {
       {!user ? (
         <div className="login-section">
           <p>Please sign in with your Google account to continue with registration</p>
-          <button 
+          <button
             className="google-signin-btn"
             onClick={handleGoogleSignIn}
             disabled={loading}
@@ -198,7 +207,7 @@ const Registration = () => {
             <img src={user.photoURL} alt={user.displayName} className="user-avatar" />
             <div className="user-details">
               <p>Signed in as: {user.displayName}</p>
-              <button 
+              <button
                 className="signout-btn"
                 onClick={handleSignOut}
                 disabled={loading}
@@ -290,10 +299,14 @@ const Registration = () => {
                 value={formData.programType}
                 onChange={handleChange}
                 required
-                disabled={loading}
+                disabled={loading || !formData.eventLocation}
               >
-                <option value="darshan">Darshan (Free)</option>
-                <option value="pooja">Pooja (25 EUR/Family)</option>
+               <option value="darshan">Darshan (Free)</option>
+                {availableProgramTypes.map((option) => (
+                  <option key={option.value} value={option.value}>
+                    {option.label}  (25 EUR/Family)
+                  </option>
+                ))}
               </select>
             </div>
 
@@ -328,8 +341,8 @@ const Registration = () => {
 
             <div className="captcha-container" ref={captchaContainer}></div>
 
-            <button 
-              type="submit" 
+            <button
+              type="submit"
               className={`submit-btn ${loading ? 'loading' : ''}`}
               disabled={loading}
             >
