@@ -3,6 +3,8 @@ import { signInWithGoogle, signOutUser, getCurrentUser, onAuthChange } from '../
 import { createRegistration } from '../firebase/registrationService';
 import { sendConfirmationEmail } from '../services/emailService';
 import { useCaptcha } from '../hooks/useCaptcha';
+import { collection, addDoc, serverTimestamp } from 'firebase/firestore';
+import { db } from '../firebase';
 import './Registration.css';
 
 const Registration = () => {
@@ -12,9 +14,11 @@ const Registration = () => {
     phone: '',
     city: '',
     eventLocation: '',
-    programType: 'darshan',
+    programType: '',
     numAdults: 1,
-    numKids: 0
+    numKids: 0,
+    wantsToContribute: false,
+    contributionAmount: ''
   });
 
   const [loading, setLoading] = useState(false);
@@ -26,13 +30,16 @@ const Registration = () => {
   const captchaContainer = useRef(null);
 
   const programTypeOptions = {
-    amstelveen: [{ value: 'pooja', label: 'Lakshmi Naryana Pooja' }],
-    eindhoven: [{ value: 'pooja', label: 'Sita Rama Kalyanam' }],
-    denhaag: [{ value: 'pooja', label: 'Dhanalakshmi Pooja' }]
+    amstelveen: [
+      { value: 'pooja', label: 'Lakshmi Naryana Pooja' }
+    ],
+    denhaag: [
+      { value: 'pooja', label: 'Dhanalakshmi Pooja' }
+    ],
+    eindhoven: [
+      { value: 'pooja', label: 'Sita Rama Kalyanam' }
+    ]
   };
-
-  const availableProgramTypes = programTypeOptions[formData.eventLocation] || [];
-
 
   const handleCaptchaVerify = (token) => {
     console.log('Captcha verified:', token);
@@ -96,34 +103,75 @@ const Registration = () => {
   };
 
   const handleChange = (e) => {
-    const { name, value } = e.target;
+    const { name, value, type, checked } = e.target;
     setFormData(prev => ({
       ...prev,
-      [name]: value
+      [name]: type === 'checkbox' ? checked : value
     }));
   };
 
   const handleSubmit = async (e) => {
     e.preventDefault();
-
-    if (!user) {
-      setError('Please sign in with Google first.');
-      return;
-    }
-
     setLoading(true);
     setError(null);
 
     try {
-      // Create registration in Firebase
-      const result = await createRegistration(formData);
-      console.log('Registration successful:', result);
-      setConfirmationNumber(result.confirmationNumber);
+      if (formData.wantsToContribute) {
+        // Create payment link for contribution
+        const response = await fetch('/api/create-payment-link', {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/json',
+          },
+          body: JSON.stringify({
+            amount: parseFloat(formData.contributionAmount),
+            description: `Registration with contribution for ${formData.eventLocation}`,
+            email: formData.email
+          }),
+        });
 
-      // Send confirmation email using EmailJS
-      await sendConfirmationEmail(formData, result.confirmationNumber);
+        const data = await response.json();
+        
+        if (!response.ok) {
+          throw new Error(data.details || data.error || 'Failed to create payment link');
+        }
 
+        if (!data.url) {
+          throw new Error('No payment URL received from server');
+        }
+
+        // Store registration data in session storage
+        sessionStorage.setItem('pendingRegistration', JSON.stringify(formData));
+        
+        // Redirect to Stripe payment page
+        window.location.href = data.url;
+        return;
+      }
+
+      // If no contribution, proceed with normal registration
+      const docRef = await addDoc(collection(db, 'registrations'), {
+        ...formData,
+        createdAt: serverTimestamp()
+      });
+
+      // Send confirmation email
+      await sendConfirmationEmail(formData, docRef.id);
+      setConfirmationNumber(docRef.id);
       setSuccess(true);
+      
+      // Reset form
+      setFormData({
+        name: '',
+        email: '',
+        phone: '',
+        city: '',
+        eventLocation: '',
+        programType: '',
+        numAdults: 1,
+        numKids: 0,
+        wantsToContribute: false,
+        contributionAmount: ''
+      });
     } catch (err) {
       console.error('Registration error:', err);
       setError(err.message || 'An error occurred during registration. Please try again.');
@@ -139,14 +187,18 @@ const Registration = () => {
       phone: '',
       city: '',
       eventLocation: '',
-      programType: 'darshan',
+      programType: '',
       numAdults: 1,
-      numKids: 0
+      numKids: 0,
+      wantsToContribute: false,
+      contributionAmount: ''
     });
     setSuccess(false);
     setConfirmationNumber(null);
     setError(null);
   };
+
+  const availableProgramTypes = programTypeOptions[formData.eventLocation] || [];
 
   if (!authInitialized) {
     return (
@@ -301,10 +353,10 @@ const Registration = () => {
                 required
                 disabled={loading || !formData.eventLocation}
               >
-               <option value="darshan">Darshan (Free)</option>
+                <option value="darshan">Darshan (Free)</option>
                 {availableProgramTypes.map((option) => (
                   <option key={option.value} value={option.value}>
-                    {option.label}  (25 EUR/Family)
+                   {option.label}  (25 EUR/Family)
                   </option>
                 ))}
               </select>
@@ -338,6 +390,34 @@ const Registration = () => {
                 />
               </div>
             </div>
+
+            <div className="form-group checkbox-group">
+              <label>
+                <input
+                  type="checkbox"
+                  name="wantsToContribute"
+                  checked={formData.wantsToContribute}
+                  onChange={handleChange}
+                />
+                I would like to make a contribution
+              </label>
+            </div>
+
+            {formData.wantsToContribute && (
+              <div className="form-group">
+                <label htmlFor="contributionAmount">Contribution Amount (€) *</label>
+                <input
+                  type="number"
+                  id="contributionAmount"
+                  name="contributionAmount"
+                  min="1"
+                  step="0.01"
+                  value={formData.contributionAmount}
+                  onChange={handleChange}
+                  required
+                />
+              </div>
+            )}
 
             <div className="captcha-container" ref={captchaContainer}></div>
 

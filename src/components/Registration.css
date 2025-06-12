@@ -353,4 +353,46 @@ label[for="numKids"]::after {
   .captcha-container {
     transform: scale(0.8);
   }
+}
+
+.form-group.checkbox-group {
+  display: flex;
+  align-items: center;
+  gap: 0.75em;
+  background: #f6f9ff;
+  border-radius: 12px;
+  padding: 1em 1.5em;
+  margin: 1.5em 0;
+  box-shadow: 0 2px 8px rgba(80, 120, 200, 0.07);
+  transition: box-shadow 0.2s;
+}
+
+.form-group.checkbox-group:hover {
+  box-shadow: 0 4px 16px rgba(80, 120, 200, 0.13);
+  background: #eaf2ff;
+}
+
+.form-group.checkbox-group input[type="checkbox"] {
+  width: 1.4em;
+  height: 1.4em;
+  accent-color: #2563eb;
+  border-radius: 6px;
+  margin-right: 0.5em;
+  transition: box-shadow 0.2s;
+  box-shadow: 0 1px 3px rgba(80, 120, 200, 0.10);
+}
+
+.form-group.checkbox-group label {
+  font-size: 1.15em;
+  font-weight: 400;
+  color: #1a237e;
+  letter-spacing: 0.01em;
+  display: flex;
+  align-items: center;
+  gap: 0.4em;
+}
+
+.form-group.checkbox-group label span[style] {
+  font-size: 1.1em;
+  margin-left: 0.2em;
 } 
