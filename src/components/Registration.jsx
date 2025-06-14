@@ -122,7 +122,7 @@ const Registration = () => {
       const isPooja = formData.programType === 'lakshm-narayana-pooja' || formData.programType === 'dhana-lakshmi-pooja';
       const hasCustom = formData.wantsToContribute && formData.contributionAmount;
 
-      if (isFree && hasCustom) {
+      if (isPooja && hasCustom) {
         amount = 26 + parseFloat(formData.contributionAmount);
       } else if (isPooja) {
         amount = 26;
