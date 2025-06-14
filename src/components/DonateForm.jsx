@@ -3,7 +3,6 @@ import './DonateForm.css';
 
 const DonateForm = () => {
   const [amount, setAmount] = useState('');
-  const [email, setEmail] = useState('');
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState('');
 
@@ -15,11 +14,6 @@ const DonateForm = () => {
     setLoading(true);
 
     try {
-      console.log('Submitting contribution form:', {
-        amount,
-        email: email || 'not provided'
-      });
-
       const response = await fetch('/api/create-payment-link', {
         method: 'POST',
         headers: {
@@ -28,7 +22,7 @@ const DonateForm = () => {
         body: JSON.stringify({
           amount: parseFloat(amount),
           description: 'Contribution to JET NL',
-          email: email || undefined,
+          email:  undefined,
         }),
       });
 
@@ -99,17 +93,6 @@ const DonateForm = () => {
             min="1"
             step="0.01"
             required
-          />
-        </div>
-
-        <div className="form-group">
-          <label htmlFor="email">Email (optional)</label>
-          <input
-            type="email"
-            id="email"
-            value={email}
-            onChange={(e) => setEmail(e.target.value)}
-            placeholder="Enter your email"
           />
         </div>
 
