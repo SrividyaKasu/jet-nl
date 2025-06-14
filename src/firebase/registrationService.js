@@ -42,17 +42,22 @@ export const createRegistration = async (registrationData) => {
       throw new Error(`Missing required fields: ${missingFields.join(', ')}`);
     }
 
+    // Generate confirmation number first using a random number
+    const randomNum = Math.floor(Math.random() * 1000000).toString().padStart(6, '0');
+    const tempDocId = `temp-${randomNum}`;
+    const confirmationNumber = generateConfirmationNumber(tempDocId, registrationData.eventLocation);
+
     const registrationWithMetadata = {
       ...registrationData,
       status: 'pending',
       createdAt: serverTimestamp(),
-      updatedAt: serverTimestamp()
+      updatedAt: serverTimestamp(),
+      confirmationNumber // Add confirmation number to the document
     };
 
     // Save registration to Firestore
     const registrationsRef = collection(db, COLLECTION_NAME);
     const docRef = await addDoc(registrationsRef, registrationWithMetadata);
-    const confirmationNumber = generateConfirmationNumber(docRef.id, registrationData.eventLocation);
 
     return {
       id: docRef.id,
