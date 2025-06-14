@@ -28,6 +28,7 @@ const Registration = () => {
   const [user, setUser] = useState(null);
   const [authInitialized, setAuthInitialized] = useState(false);
   const captchaContainer = useRef(null);
+  const [captchaRendered, setCaptchaRendered] = useState(false);
 
   const programTypeOptions = {
     amstelveen: [
@@ -69,10 +70,11 @@ const Registration = () => {
   }, []);
 
   useEffect(() => {
-    if (captchaContainer.current && user) {
+    if (captchaContainer.current && user && !captchaRendered) {
       renderCaptcha(captchaContainer.current);
+      setCaptchaRendered(true);
     }
-  }, [renderCaptcha, user]);
+  }, [renderCaptcha, user, captchaRendered]);
 
   const handleGoogleSignIn = async () => {
     try {
@@ -166,12 +168,9 @@ const Registration = () => {
         return;
       }
 
-      // If no payment needed, proceed with normal registration
-      const docRef = await addDoc(collection(db, 'registrations'), {
-        ...registrationData,
-        createdAt: serverTimestamp()
-      });
-
+      const result = await createRegistration(registrationData);
+      setConfirmationNumber(result.confirmationNumber);
+     
       // Send confirmation email
       await sendConfirmationEmail(registrationData, docRef.id);
       setConfirmationNumber(docRef.id);
@@ -214,6 +213,7 @@ const Registration = () => {
     setSuccess(false);
     setConfirmationNumber(null);
     setError(null);
+    setCaptchaRendered(false);
   };
 
   const availableProgramTypes = programTypeOptions[formData.eventLocation] || [];
