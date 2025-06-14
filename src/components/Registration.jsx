@@ -170,10 +170,9 @@ const Registration = () => {
 
       const result = await createRegistration(registrationData);
       setConfirmationNumber(result.confirmationNumber);
-     
+      
       // Send confirmation email
-      await sendConfirmationEmail(registrationData, docRef.id);
-      setConfirmationNumber(docRef.id);
+      await sendConfirmationEmail(registrationData, result.confirmationNumber);
       setSuccess(true);
 
       // Reset form

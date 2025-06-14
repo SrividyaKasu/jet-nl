@@ -3,6 +3,7 @@ import { Link } from 'react-router-dom';
 import { collection, addDoc, serverTimestamp } from 'firebase/firestore';
 import { db } from '../firebase';
 import { sendConfirmationEmail } from '../services/emailService';
+import { createRegistration } from '../firebase/registrationService';
 import './PaymentSuccess.css';
 
 const PaymentSuccess = () => {
@@ -16,10 +17,12 @@ const PaymentSuccess = () => {
       if (pending) {
         const formData = JSON.parse(pending);
         try {
+          // Create registration with confirmation number
           const result = await createRegistration(formData);
-          console.log('Registration successful:', result);
           setConfirmationNumber(result.confirmationNumber);
-          await sendConfirmationEmail(formData, result.id);
+          
+          // Send confirmation email
+          await sendConfirmationEmail(formData, result.confirmationNumber);
           setRegistrationSuccess(true);
         } catch (err) {
           // Optionally handle error (show message, etc.)
