@@ -16,15 +16,11 @@ const PaymentSuccess = () => {
       if (pending) {
         const formData = JSON.parse(pending);
         try {
-          // Save to Firestore
-          const docRef = await addDoc(collection(db, 'registrations'), {
-            ...formData,
-            createdAt: serverTimestamp()
-          });
-          // Send confirmation email
-          await sendConfirmationEmail(formData, docRef.id);
+          const result = await createRegistration(formData);
+          console.log('Registration successful:', result);
+          setConfirmationNumber(result.confirmationNumber);
+          await sendConfirmationEmail(formData, result.id);
           setRegistrationSuccess(true);
-          setConfirmationNumber(docRef.id);
         } catch (err) {
           // Optionally handle error (show message, etc.)
           console.error('Error processing registration after payment:', err);
