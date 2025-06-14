@@ -21,17 +21,17 @@ const Home = () => {
             </thead>
             <tbody>
               <tr>
-                <td>July 18th 2025</td>
+                <td>July 18th 2025, 5 PM onwards</td>
                 <td>Lakshmi Naryana Pooja</td>
                 <td>US Open Zaal, Bovenkerkerweg 81, 1187 XC Amstelveen</td>
               </tr>
               <tr>
-                <td>July 19th 2025</td>
+                <td>July 19th 2025, 5 PM onwards</td>
                 <td>Sita Rama Kalyanam</td>
                 <td>ASAN Arya Samaj Nederland, Van der Kunstraat 75, 2521 BA Den Haag</td>
               </tr>
               <tr>
-                <td>July 20th 2025</td>
+                <td>July 20th 2025, 1 PM onwards</td>
                 <td>Dhanalakshmi Pooja</td>
                 <td>Eindhoven</td>
               </tr>
@@ -43,6 +43,9 @@ const Home = () => {
       <section className="connect-section">
         <h2>Connect with us</h2>
         <div className="contact-info">
+          <p>📞 +31 (0) 611870997</p>
+          <p>📞 +31 (0) 684859730</p>
+         
           <p>✉️ jeeyartrustnl@gmail.com</p>
           <p>📍 Amsterdam, Netherlands</p>
         </div>
