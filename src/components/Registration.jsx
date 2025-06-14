@@ -126,11 +126,14 @@ const Registration = () => {
       const hasCustom = formData.wantsToContribute && formData.contributionAmount;
 
       if (isPooja && hasCustom) {
-        amount = 26 + parseFloat(formData.contributionAmount);
+        // Convert contribution amount to number only when needed for calculation
+        const contributionAmount = parseFloat(formData.contributionAmount) || 0;
+        amount = 26 + contributionAmount;
       } else if (isPooja) {
         amount = 26;
       } else if (hasCustom) {
-        amount = parseFloat(formData.contributionAmount);
+        // Convert contribution amount to number only when needed for calculation
+        amount = parseFloat(formData.contributionAmount) || 0;
       }
 
       // Create a copy of formData to ensure we don't lose any data
