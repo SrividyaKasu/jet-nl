@@ -38,15 +38,16 @@ const PaymentSuccess = () => {
   return (
     <div className="payment-success">
       <div className="success-icon">✓</div>
-      <h1>Thank You!</h1>
-      <p>Your contribution has been successfully processed.</p>
-      <p>We truly appreciate your support.</p>
       {registrationSuccess && (
         <div className="registration-success-message">
-          {confirmationNumber && <p>Your confirmation number is: {confirmationNumber}</p>}
+          {confirmationNumber && 
+          <p>Your registration is successful. Your confirmation number is: {confirmationNumber}</p>}
           <p>A confirmation email has been sent to your email address.</p>
         </div>
       )}
+      <p>Thank You for your contribution.</p>
+      <p>It has been successfully processed.</p>
+      <p>We truly appreciate your support.</p>
       <Link to="/" className="home-button">
         Return to Home
       </Link>
