@@ -8,20 +8,27 @@ import './LocationPage.css';
 const LocationPage = () => {
   const { location } = useParams();
   const [registrations, setRegistrations] = useState([]);
+  const [filteredRegistrations, setFilteredRegistrations] = useState([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
   const [totals, setTotals] = useState({ adults: 0, kids: 0 });
   const [currentPage, setCurrentPage] = useState(1);
+  const [searchQuery, setSearchQuery] = useState('');
   const registrationsPerPage = 10;
 
   // Get current registrations
   const indexOfLastRegistration = currentPage * registrationsPerPage;
   const indexOfFirstRegistration = indexOfLastRegistration - registrationsPerPage;
-  const currentRegistrations = registrations.slice(indexOfFirstRegistration, indexOfLastRegistration);
-  const totalPages = Math.ceil(registrations.length / registrationsPerPage);
+  const currentRegistrations = filteredRegistrations.slice(indexOfFirstRegistration, indexOfLastRegistration);
+  const totalPages = Math.ceil(filteredRegistrations.length / registrationsPerPage);
 
   // Change page
   const paginate = (pageNumber) => setCurrentPage(pageNumber);
+
+  // Reset page when search changes
+  useEffect(() => {
+    setCurrentPage(1);
+  }, [searchQuery]);
 
   useEffect(() => {
     const fetchRegistrations = async () => {
@@ -38,6 +45,7 @@ const LocationPage = () => {
         }));
         
         setRegistrations(data);
+        setFilteredRegistrations(data);
         setLoading(false);
       } catch (err) {
         console.error('Error fetching registrations:', err);
@@ -51,14 +59,35 @@ const LocationPage = () => {
     }
   }, [location]);
 
-  // Calculate totals when registrations change
+  // Filter registrations when search query changes
   useEffect(() => {
-    const newTotals = registrations.reduce((acc, reg) => ({
+    if (searchQuery) {
+      const query = searchQuery.toLowerCase();
+      const filtered = registrations.filter(reg => 
+        reg.name?.toLowerCase().includes(query) ||
+        reg.email?.toLowerCase().includes(query) ||
+        reg.phone?.toLowerCase().includes(query) ||
+        reg.confirmationNumber?.toLowerCase().includes(query) ||
+        reg.city?.toLowerCase().includes(query)
+      );
+      setFilteredRegistrations(filtered);
+    } else {
+      setFilteredRegistrations(registrations);
+    }
+  }, [searchQuery, registrations]);
+
+  // Calculate totals when filtered registrations change
+  useEffect(() => {
+    const newTotals = filteredRegistrations.reduce((acc, reg) => ({
       adults: acc.adults + (parseInt(reg.numAdults) || 0),
       kids: acc.kids + (parseInt(reg.numKids) || 0)
     }), { adults: 0, kids: 0 });
     setTotals(newTotals);
-  }, [registrations]);
+  }, [filteredRegistrations]);
+
+  const handleSearchChange = (e) => {
+    setSearchQuery(e.target.value);
+  };
 
   const exportToExcel = () => {
     try {
@@ -101,6 +130,15 @@ const LocationPage = () => {
       <div className="location-header">
         <h1>{location.charAt(0).toUpperCase() + location.slice(1)} Registrations</h1>
         <div className="location-actions">
+          <div className="search-container">
+            <input
+              type="text"
+              placeholder="Search by name, email, phone, confirmation #..."
+              value={searchQuery}
+              onChange={handleSearchChange}
+              className="search-input"
+            />
+          </div>
           <button onClick={exportToExcel} className="export-btn">
             Export to Excel
           </button>

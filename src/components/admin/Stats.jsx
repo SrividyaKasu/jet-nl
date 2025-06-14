@@ -28,10 +28,6 @@ const Stats = () => {
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
 
-  const getLocationUrl = (location) => {
-    return `${window.location.origin}/location/${location}`;
-  };
-
   useEffect(() => {
     const fetchStats = async () => {
       try {
@@ -39,27 +35,36 @@ const Stats = () => {
         const registrationsRef = collection(db, 'registrations');
         const querySnapshot = await getDocs(query(registrationsRef));
         
-        const cityStats = {};
+        const locationStats = {};
         
         querySnapshot.forEach((doc) => {
           const data = doc.data();
-          const city = data.eventLocation;
+          const location = data.eventLocation;
           
-          if (!cityStats[city]) {
-            cityStats[city] = {
+          if (!locationStats[location]) {
+            locationStats[location] = {
               totalAdults: 0,
               totalChildren: 0,
-              darshan: 0,
-              pooja: 0
+              programs: {
+                'darshan': 0,
+                'lakshmi-narayana-pooja': 0,
+                'dhana-lakshmi-pooja': 0,
+                'sita-rama-kalyanam': 0
+              }
             };
           }
           
-          cityStats[city].totalAdults += parseInt(data.numAdults) || 0;
-          cityStats[city].totalChildren += parseInt(data.numKids) || 0;
-          cityStats[city][data.programType.toLowerCase()]++;
+          locationStats[location].totalAdults += parseInt(data.numAdults) || 0;
+          locationStats[location].totalChildren += parseInt(data.numKids) || 0;
+          
+          // Count program types
+          if (data.programType) {
+            locationStats[location].programs[data.programType] = 
+              (locationStats[location].programs[data.programType] || 0) + 1;
+          }
         });
         
-        setStats(cityStats);
+        setStats(locationStats);
         setLoading(false);
       } catch (error) {
         console.error('Error fetching stats:', error);
@@ -88,37 +93,57 @@ const Stats = () => {
   }
 
   // Prepare data for the chart
-  const sortedCities = Object.keys(stats).sort();
+  const sortedLocations = Object.keys(stats).sort();
   
   const chartData = {
-    labels: sortedCities,
+    labels: sortedLocations,
     datasets: [
       {
         label: 'Adults',
-        data: sortedCities.map(city => stats[city].totalAdults),
+        data: sortedLocations.map(location => stats[location].totalAdults),
         backgroundColor: 'rgba(139, 0, 0, 0.7)',
         borderColor: 'rgba(139, 0, 0, 1)',
         borderWidth: 1
       },
       {
         label: 'Children',
-        data: sortedCities.map(city => stats[city].totalChildren),
+        data: sortedLocations.map(location => stats[location].totalChildren),
         backgroundColor: 'rgba(255, 140, 0, 0.7)',
         borderColor: 'rgba(255, 140, 0, 1)',
         borderWidth: 1
-      },
+      }
+    ]
+  };
+
+  const programChartData = {
+    labels: sortedLocations,
+    datasets: [
       {
         label: 'Darshan',
-        data: sortedCities.map(city => stats[city].darshan),
+        data: sortedLocations.map(location => stats[location].programs['darshan'] || 0),
         backgroundColor: 'rgba(0, 100, 0, 0.7)',
         borderColor: 'rgba(0, 100, 0, 1)',
         borderWidth: 1
       },
       {
-        label: 'Pooja',
-        data: sortedCities.map(city => stats[city].pooja),
+        label: 'Lakshmi Narayana Pooja',
+        data: sortedLocations.map(location => stats[location].programs['lakshmi-narayana-pooja'] || 0),
         backgroundColor: 'rgba(70, 130, 180, 0.7)',
         borderColor: 'rgba(70, 130, 180, 1)',
+        borderWidth: 1
+      },
+      {
+        label: 'Dhana Lakshmi Pooja',
+        data: sortedLocations.map(location => stats[location].programs['dhana-lakshmi-pooja'] || 0),
+        backgroundColor: 'rgba(128, 0, 128, 0.7)',
+        borderColor: 'rgba(128, 0, 128, 1)',
+        borderWidth: 1
+      },
+      {
+        label: 'Sita Rama Kalyanam',
+        data: sortedLocations.map(location => stats[location].programs['sita-rama-kalyanam'] || 0),
+        backgroundColor: 'rgba(255, 69, 0, 0.7)',
+        borderColor: 'rgba(255, 69, 0, 1)',
         borderWidth: 1
       }
     ]
@@ -157,30 +182,40 @@ const Stats = () => {
       <div className="stats-section">
         <h2>Registration Statistics</h2>
         <div className="stats-chart-container">
+          <h3>Total Registrations by Location</h3>
           <Bar data={chartData} options={chartOptions} />
+        </div>
+
+        <div className="stats-chart-container">
+          <h3>Program Types by Location</h3>
+          <Bar data={programChartData} options={chartOptions} />
         </div>
         
         <div className="stats-table-container">
           <table className="stats-table">
             <thead>
               <tr>
-                <th>City</th>
+                <th>Location</th>
                 <th>Total Adults</th>
                 <th>Total Children</th>
-                <th>Darshan Count</th>
-                <th>Pooja Count</th>
+                <th>Darshan</th>
+                <th>Lakshmi Narayana Pooja</th>
+                <th>Dhana Lakshmi Pooja</th>
+                <th>Sita Rama Kalyanam</th>
               </tr>
             </thead>
             <tbody>
               {Object.entries(stats)
                 .sort(([a], [b]) => a.localeCompare(b))
-                .map(([city, data]) => (
-                  <tr key={city}>
-                    <td>{city}</td>
+                .map(([location, data]) => (
+                  <tr key={location}>
+                    <td>{location}</td>
                     <td>{data.totalAdults}</td>
                     <td>{data.totalChildren}</td>
-                    <td>{data.darshan}</td>
-                    <td>{data.pooja}</td>
+                    <td>{data.programs['darshan'] || 0}</td>
+                    <td>{data.programs['lakshmi-narayana-pooja'] || 0}</td>
+                    <td>{data.programs['dhana-lakshmi-pooja'] || 0}</td>
+                    <td>{data.programs['sita-rama-kalyanam'] || 0}</td>
                   </tr>
                 ))}
             </tbody>

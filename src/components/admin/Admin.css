@@ -54,8 +54,11 @@
 
 .admin-header {
   display: flex;
-  flex-direction: column;
+  justify-content: space-between;
+  align-items: center;
   margin-bottom: 2rem;
+  flex-wrap: wrap;
+  gap: 1rem;
 }
 
 .admin-controls {
@@ -192,11 +195,15 @@ th:nth-child(9), td:nth-child(9) { min-width: 120px; }  /* Registration Date */
   border-radius: 8px;
   box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
   padding: 2rem;
+  width: 100%;
+  max-width: 1400px;
+  margin: 0 auto;
 }
 
 .admin-container h1 {
   color: var(--primary-color);
   margin-bottom: 2rem;
+  font-size: clamp(1.5rem, 4vw, 2.5rem);
 }
 
 /* Registrations Table */
@@ -217,6 +224,7 @@ th:nth-child(9), td:nth-child(9) { min-width: 120px; }  /* Registration Date */
   text-align: center;
   padding: 2rem;
   color: #666;
+  font-size: 1.1rem;
 }
 
 .error-message {
@@ -404,33 +412,35 @@ th:nth-child(9), td:nth-child(9) { min-width: 120px; }  /* Registration Date */
 /* Stats Table Specific Styles */
 .stats-table-container {
   overflow-x: auto;
-  margin-top: 0;
+  margin-top: 2rem;
+  background: white;
+  border-radius: 8px;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
 }
 
 .stats-table {
   width: 100%;
   border-collapse: collapse;
-  font-size: 1.1rem;
+  font-size: clamp(0.85rem, 1.5vw, 1rem);
 }
 
 .stats-table th,
 .stats-table td {
   padding: 1rem;
   text-align: left;
-  border: none;
+  border-bottom: 1px solid #e9ecef;
 }
 
 .stats-table th {
-  color: #333;
-  font-weight: 500;
+  background-color: #f8f9fa;
+  font-weight: 600;
+  color: #495057;
   white-space: nowrap;
+  position: sticky;
+  top: 0;
+  z-index: 1;
 }
 
-.stats-table td {
-  color: #333;
-}
-
-/* Align numbers to the center */
 .stats-table td:not(:first-child) {
   text-align: center;
 }
@@ -595,13 +605,28 @@ th:nth-child(9), td:nth-child(9) { min-width: 120px; }  /* Registration Date */
 }
 
 .stats-section {
-  margin-bottom: 3rem;
+  margin-top: 2rem;
 }
 
 .stats-section h2 {
+  font-size: clamp(1.25rem, 3vw, 2rem);
   margin-bottom: 1.5rem;
   color: #333;
-  font-size: 1.5rem;
+}
+
+.stats-section h3 {
+  font-size: clamp(1.1rem, 2.5vw, 1.5rem);
+  margin-bottom: 1rem;
+  color: #444;
+}
+
+.stats-chart-container {
+  background: white;
+  padding: 1.5rem;
+  border-radius: 8px;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+  margin-bottom: 2rem;
+  height: 400px;
 }
 
 /* Ensure tables are scrollable on mobile */
@@ -626,27 +651,22 @@ th:nth-child(9), td:nth-child(9) { min-width: 120px; }  /* Registration Date */
   justify-content: center;
   align-items: center;
   gap: 1rem;
-  margin: 2rem 0;
-  padding: 1rem;
+  margin-top: 2rem;
   flex-wrap: wrap;
 }
 
 .pagination-button {
-  padding: 0.75rem 1.5rem;
-  border: 1px solid #dee2e6;
+  padding: 0.5rem 1rem;
+  border: 1px solid #ddd;
   border-radius: 4px;
   background: white;
-  color: #495057;
   cursor: pointer;
-  font-size: clamp(0.85rem, 1.5vw, 0.9rem);
   transition: all 0.2s ease;
-  min-width: 120px;
-  text-align: center;
 }
 
 .pagination-button:hover:not(:disabled) {
-  background: #e9ecef;
-  border-color: #ced4da;
+  background: #f8f9fa;
+  border-color: #999;
 }
 
 .pagination-button:disabled {
@@ -655,25 +675,151 @@ th:nth-child(9), td:nth-child(9) { min-width: 120px; }  /* Registration Date */
 }
 
 .pagination-info {
-  font-size: clamp(0.85rem, 1.5vw, 0.9rem);
-  color: #6c757d;
-  text-align: center;
-  min-width: 150px;
+  font-size: 0.9rem;
+  color: #666;
 }
 
-@media (max-width: 480px) {
-  .pagination {
-    flex-direction: column;
-    align-items: stretch;
-    gap: 0.75rem;
+.admin-actions {
+  display: flex;
+  gap: 1rem;
+  flex-wrap: wrap;
+  align-items: center;
+}
+
+/* Search Container */
+.search-container {
+  flex: 1;
+  min-width: 250px;
+  max-width: 400px;
+}
+
+.search-input {
+  width: 100%;
+  padding: 0.75rem;
+  border: 1px solid #ddd;
+  border-radius: 6px;
+  font-size: 1rem;
+  transition: border-color 0.2s ease;
+}
+
+.search-input:focus {
+  outline: none;
+  border-color: var(--primary-color);
+}
+
+/* Location Select */
+.location-select {
+  padding: 0.75rem;
+  border: 1px solid #ddd;
+  border-radius: 6px;
+  font-size: 1rem;
+  min-width: 150px;
+  background-color: white;
+  cursor: pointer;
+}
+
+/* Export Button */
+.export-btn {
+  padding: 0.75rem 1.5rem;
+  background-color: #4CAF50;
+  color: white;
+  border: none;
+  border-radius: 6px;
+  font-size: 1rem;
+  cursor: pointer;
+  transition: background-color 0.2s ease;
+  white-space: nowrap;
+}
+
+.export-btn:hover {
+  background-color: #45a049;
+}
+
+@media (max-width: 1200px) {
+  .admin-container {
+    padding: 1.5rem;
   }
 
-  .pagination-button,
-  .pagination-info {
+  .stats-chart-container {
+    height: 350px;
+  }
+}
+
+@media (max-width: 992px) {
+  .admin-header {
+    flex-direction: column;
+    align-items: stretch;
+  }
+
+  .admin-actions {
+    flex-direction: column;
     width: 100%;
   }
 
-  th, td {
+  .search-container {
+    max-width: none;
+  }
+
+  .location-select,
+  .export-btn {
+    width: 100%;
+  }
+
+  .stats-chart-container {
+    height: 300px;
+  }
+}
+
+@media (max-width: 768px) {
+  .admin-container {
+    padding: 1rem;
+  }
+
+  .stats-chart-container {
+    height: 250px;
+    padding: 1rem;
+  }
+
+  .stats-table th,
+  .stats-table td,
+  .registrations-table th,
+  .registrations-table td {
+    padding: 0.75rem 0.5rem;
+    font-size: 0.85rem;
+  }
+
+  .pagination {
+    flex-direction: column;
+    gap: 0.75rem;
+  }
+
+  .pagination-button {
+    width: 100%;
+  }
+}
+
+@media (max-width: 480px) {
+  .admin-container h1 {
+    font-size: 1.75rem;
+  }
+
+  .stats-section h2 {
+    font-size: 1.25rem;
+  }
+
+  .stats-section h3 {
+    font-size: 1.1rem;
+  }
+
+  .stats-chart-container {
+    height: 200px;
+  }
+
+  .stats-table th,
+  .stats-table td,
+  .registrations-table th,
+  .registrations-table td {
     padding: 0.5rem 0.4rem;
+    font-size: 0.8rem;
   }
 } 

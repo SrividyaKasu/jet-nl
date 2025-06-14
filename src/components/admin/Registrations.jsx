@@ -13,6 +13,7 @@ const Registrations = () => {
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
   const [currentPage, setCurrentPage] = useState(1);
+  const [searchQuery, setSearchQuery] = useState('');
   const registrationsPerPage = 10;
 
   // Get current registrations
@@ -24,10 +25,10 @@ const Registrations = () => {
   // Change page
   const paginate = (pageNumber) => setCurrentPage(pageNumber);
 
-  // Reset page when location changes
+  // Reset page when location or search changes
   useEffect(() => {
     setCurrentPage(1);
-  }, [selectedLocation]);
+  }, [selectedLocation, searchQuery]);
 
   useEffect(() => {
     const fetchRegistrations = async () => {
@@ -53,20 +54,36 @@ const Registrations = () => {
     fetchRegistrations();
   }, []);
 
-  // Filter registrations when location selection changes
+  // Filter registrations when location selection or search query changes
   useEffect(() => {
-    if (selectedLocation === 'all') {
-      setFilteredRegistrations(registrations);
-    } else {
-      const filtered = registrations.filter(reg => {
-        // Check both possible field names for location
+    let filtered = registrations;
+
+    // Filter by location
+    if (selectedLocation !== 'all') {
+      filtered = filtered.filter(reg => {
         const regLocation = reg.eventLocation || reg.location;
         return regLocation?.toLowerCase() === selectedLocation.toLowerCase();
       });
-      console.log('Filtered registrations for', selectedLocation, ':', filtered); // Debug log
-      setFilteredRegistrations(filtered);
     }
-  }, [selectedLocation, registrations]);
+
+    // Filter by search query
+    if (searchQuery) {
+      const query = searchQuery.toLowerCase();
+      filtered = filtered.filter(reg => 
+        reg.name?.toLowerCase().includes(query) ||
+        reg.email?.toLowerCase().includes(query) ||
+        reg.phone?.toLowerCase().includes(query) ||
+        reg.confirmationNumber?.toLowerCase().includes(query) ||
+        reg.city?.toLowerCase().includes(query)
+      );
+    }
+
+    setFilteredRegistrations(filtered);
+  }, [selectedLocation, registrations, searchQuery]);
+
+  const handleSearchChange = (e) => {
+    setSearchQuery(e.target.value);
+  };
 
   const exportToExcel = () => {
     try {
@@ -116,11 +133,21 @@ const Registrations = () => {
   return (
     <div className="admin-content">
       <div className="admin-header">
-        <div className="admin-controls">
-          <select 
-            value={selectedLocation} 
+        <h1>Registrations</h1>
+        <div className="admin-actions">
+          <div className="search-container">
+            <input
+              type="text"
+              placeholder="Search by name, email, phone, confirmation #..."
+              value={searchQuery}
+              onChange={handleSearchChange}
+              className="search-input"
+            />
+          </div>
+          <select
+            value={selectedLocation}
             onChange={(e) => setSelectedLocation(e.target.value)}
-            className="location-filter"
+            className="location-select"
           >
             <option value="all">All Locations</option>
             {LOCATIONS.map(loc => (
@@ -129,11 +156,10 @@ const Registrations = () => {
               </option>
             ))}
           </select>
-          <button onClick={exportToExcel} className="export-button">
+          <button onClick={exportToExcel} className="export-btn">
             Export to Excel
           </button>
         </div>
-        <h1>Registrations</h1>
       </div>
 
       <div className="registrations-table-container">
