@@ -43,8 +43,7 @@ const Home = () => {
       <section className="connect-section">
         <h2>Connect with us</h2>
         <div className="contact-info">
-          <p>📞 +31 (0) 684859730</p>
-          <p>✉️ info@jetnl.org</p>
+          <p>✉️ jeeyartrustnl@gmail.com</p>
           <p>📍 Amsterdam, Netherlands</p>
         </div>
       </section>

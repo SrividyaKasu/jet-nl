@@ -43,7 +43,6 @@ const PaymentSuccess = () => {
       <p>We truly appreciate your support.</p>
       {registrationSuccess && (
         <div className="registration-success-message">
-          <h2>Registration Successful!</h2>
           {confirmationNumber && <p>Your confirmation number is: {confirmationNumber}</p>}
           <p>A confirmation email has been sent to your email address.</p>
         </div>

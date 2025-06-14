@@ -32,7 +32,9 @@ const Layout = () => (
     <footer className="footer">
       <div className="footer-content">
         <p>© {new Date().getFullYear()} Jeeyar Educational Trust NL</p>
-        <p>A Non-Profit 501 (c)(3) Organization.</p>
+        <p>A Non-Profit 501 (c)(3) Organization</p>
+        <p>Administered by Swarakshetra</p>
+        <p>Powered by Sitra Solutions</p>
       </div>
     </footer>
   </div>
