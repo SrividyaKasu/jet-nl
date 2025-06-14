@@ -8,6 +8,21 @@
   box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
 }
 
+.loading-spinner {
+  width: 50px;
+  height: 50px;
+  margin: 0 auto 2rem;
+  border: 4px solid #f3f3f3;
+  border-top: 4px solid #28a745;
+  border-radius: 50%;
+  animation: spin 1s linear infinite;
+}
+
+@keyframes spin {
+  0% { transform: rotate(0deg); }
+  100% { transform: rotate(360deg); }
+}
+
 .success-icon {
   width: 80px;
   height: 80px;

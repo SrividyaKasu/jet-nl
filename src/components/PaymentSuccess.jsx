@@ -8,6 +8,7 @@ import './PaymentSuccess.css';
 const PaymentSuccess = () => {
   const [registrationSuccess, setRegistrationSuccess] = useState(false);
   const [confirmationNumber, setConfirmationNumber] = useState(null);
+  const [isLoading, setIsLoading] = useState(true);
 
   useEffect(() => {
     const processRegistration = async () => {
@@ -27,13 +28,26 @@ const PaymentSuccess = () => {
         } catch (err) {
           // Optionally handle error (show message, etc.)
           console.error('Error processing registration after payment:', err);
+        } finally {
+          // Remove from sessionStorage
+          sessionStorage.removeItem('pendingRegistration');
+          setIsLoading(false);
         }
-        // Remove from sessionStorage
-        sessionStorage.removeItem('pendingRegistration');
+      } else {
+        setIsLoading(false);
       }
     };
     processRegistration();
   }, []);
+
+  if (isLoading) {
+    return (
+      <div className="payment-success">
+        <div className="loading-spinner"></div>
+        <p>Processing your registration...</p>
+      </div>
+    );
+  }
 
   return (
     <div className="payment-success">
@@ -45,7 +59,7 @@ const PaymentSuccess = () => {
           <p>A confirmation email has been sent to your email address.</p>
         </div>
       )}
-      <p>Thank You for your contribution.</p>
+      <p>Thank you for your contribution.</p>
       <p>It has been successfully processed.</p>
       <p>We truly appreciate your support.</p>
       <Link to="/" className="home-button">
