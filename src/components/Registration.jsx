@@ -31,13 +31,15 @@ const Registration = () => {
 
   const programTypeOptions = {
     amstelveen: [
-      { value: 'pooja', label: 'Lakshmi Naryana Pooja' }
+      {value: 'darshan', label: 'Darshan (Free)'},
+      { value: 'lakshm-narayana-pooja', label: 'Lakshmi Naryana Pooja(26 EUR/Family)' }
     ],
     denhaag: [
-      { value: 'pooja', label: 'Dhanalakshmi Pooja' }
+      {value: 'darshan', label: 'Darshan (Free)'},
+      { value: 'dhana-lakshmi-pooja', label: 'Dhanalakshmi Pooja(26 EUR/Family)' }
     ],
     eindhoven: [
-      { value: 'pooja', label: 'Sita Rama Kalyanam' }
+      { value: 'sita-rama-kalyanam', label: 'Sita Rama Kalyanam(Free)' }
     ]
   };
 
@@ -117,12 +119,12 @@ const Registration = () => {
 
     try {
       let amount = 0;
-      const isPooja = formData.programType === 'pooja';
+      const isFree = formData.programType === 'darshan' || formData.programType === 'sita-rama-kalyanam';
       const hasCustom = formData.wantsToContribute && formData.contributionAmount;
 
-      if (isPooja && hasCustom) {
+      if (!isFree && hasCustom) {
         amount = 25 + parseFloat(formData.contributionAmount);
-      } else if (isPooja) {
+      } else if (!isFree) {
         amount = 25;
       } else if (hasCustom) {
         amount = parseFloat(formData.contributionAmount);
@@ -365,10 +367,9 @@ const Registration = () => {
                 required
                 disabled={loading || !formData.eventLocation}
               >
-                <option value="darshan">Darshan (Free)</option>
                 {availableProgramTypes.map((option) => (
                   <option key={option.value} value={option.value}>
-                   {option.label}  (26 EUR/Family)
+                   {option.label}  
                   </option>
                 ))}
               </select>
