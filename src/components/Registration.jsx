@@ -31,14 +31,14 @@ const Registration = () => {
 
   const programTypeOptions = {
     amstelveen: [
-      {value: 'darshan', label: 'Darshan (Free)'},
-      { value: 'lakshm-narayana-pooja', label: 'Lakshmi Naryana Pooja (26 EUR/Family)' }
+      { value: 'darshan', label: 'Darshan (Free)' },
+      { value: 'lakshmi-narayana-pooja', label: 'Lakshmi Naryana Pooja (26 EUR/Family)' }
     ],
     denhaag: [
       { value: 'sita-rama-kalyanam', label: 'Sita Rama Kalyanam (Free)' }
     ],
     eindhoven: [
-      {value: 'darshan', label: 'Darshan (Free)'},
+      { value: 'darshan', label: 'Darshan (Free)' },
       { value: 'dhana-lakshmi-pooja', label: 'Dhanalakshmi Pooja (26 EUR/Family)' }
     ]
   };
@@ -119,7 +119,8 @@ const Registration = () => {
 
     try {
       let amount = 0;
-      const isPooja = formData.programType === 'lakshm-narayana-pooja' || formData.programType === 'dhana-lakshmi-pooja';
+      const isPooja = formData.programType === 'lakshmi-narayana-pooja' || 
+                     formData.programType === 'dhana-lakshmi-pooja';
       const hasCustom = formData.wantsToContribute && formData.contributionAmount;
 
       if (isPooja && hasCustom) {
@@ -130,6 +131,9 @@ const Registration = () => {
         amount = parseFloat(formData.contributionAmount);
       }
 
+      // Create a copy of formData to ensure we don't lose any data
+      const registrationData = { ...formData };
+
       if (amount > 0) {
         // Create payment link for the calculated amount
         const response = await fetch('/api/create-payment-link', {
@@ -139,8 +143,8 @@ const Registration = () => {
           },
           body: JSON.stringify({
             amount,
-            description: `Registration for ${formData.eventLocation} (${formData.programType})`,
-            email: formData.email
+            description: `Registration for ${registrationData.eventLocation} (${registrationData.programType})`,
+            email: registrationData.email
           }),
         });
 
@@ -155,7 +159,7 @@ const Registration = () => {
         }
 
         // Store registration data in session storage
-        sessionStorage.setItem('pendingRegistration', JSON.stringify(formData));
+        sessionStorage.setItem('pendingRegistration', JSON.stringify(registrationData));
 
         // Redirect to Stripe payment page
         window.location.href = data.url;
@@ -164,12 +168,12 @@ const Registration = () => {
 
       // If no payment needed, proceed with normal registration
       const docRef = await addDoc(collection(db, 'registrations'), {
-        ...formData,
+        ...registrationData,
         createdAt: serverTimestamp()
       });
 
       // Send confirmation email
-      await sendConfirmationEmail(formData, docRef.id);
+      await sendConfirmationEmail(registrationData, docRef.id);
       setConfirmationNumber(docRef.id);
       setSuccess(true);
 
@@ -367,9 +371,10 @@ const Registration = () => {
                 required
                 disabled={loading || !formData.eventLocation}
               >
+                <option value="">Select Program Type</option>
                 {availableProgramTypes.map((option) => (
                   <option key={option.value} value={option.value}>
-                   {option.label}  
+                    {option.label}
                   </option>
                 ))}
               </select>
