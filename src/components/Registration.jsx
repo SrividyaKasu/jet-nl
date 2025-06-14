@@ -368,7 +368,7 @@ const Registration = () => {
                 <option value="darshan">Darshan (Free)</option>
                 {availableProgramTypes.map((option) => (
                   <option key={option.value} value={option.value}>
-                   {option.label}  (25 EUR/Family)
+                   {option.label}  (26 EUR/Family)
                   </option>
                 ))}
               </select>
