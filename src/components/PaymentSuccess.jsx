@@ -60,7 +60,6 @@ const PaymentSuccess = () => {
         </div>
       )}
       <p>Thank you for your contribution.</p>
-      <p>It has been successfully processed.</p>
       <p>We truly appreciate your support.</p>
       <Link to="/" className="home-button">
         Return to Home
