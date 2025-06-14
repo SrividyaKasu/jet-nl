@@ -32,14 +32,14 @@ const Registration = () => {
   const programTypeOptions = {
     amstelveen: [
       {value: 'darshan', label: 'Darshan (Free)'},
-      { value: 'lakshm-narayana-pooja', label: 'Lakshmi Naryana Pooja(26 EUR/Family)' }
+      { value: 'lakshm-narayana-pooja', label: 'Lakshmi Naryana Pooja (26 EUR/Family)' }
     ],
     denhaag: [
-      {value: 'darshan', label: 'Darshan (Free)'},
-      { value: 'dhana-lakshmi-pooja', label: 'Dhanalakshmi Pooja(26 EUR/Family)' }
+      { value: 'sita-rama-kalyanam', label: 'Sita Rama Kalyanam (Free)' }
     ],
     eindhoven: [
-      { value: 'sita-rama-kalyanam', label: 'Sita Rama Kalyanam(Free)' }
+      {value: 'darshan', label: 'Darshan (Free)'},
+      { value: 'dhana-lakshmi-pooja', label: 'Dhanalakshmi Pooja (26 EUR/Family)' }
     ]
   };
 
@@ -119,13 +119,13 @@ const Registration = () => {
 
     try {
       let amount = 0;
-      const isFree = formData.programType === 'darshan' || formData.programType === 'sita-rama-kalyanam';
+      const isPooja = formData.programType === 'lakshm-narayana-pooja' || formData.programType === 'dhana-lakshmi-pooja';
       const hasCustom = formData.wantsToContribute && formData.contributionAmount;
 
-      if (!isFree && hasCustom) {
-        amount = 25 + parseFloat(formData.contributionAmount);
-      } else if (!isFree) {
-        amount = 25;
+      if (isFree && hasCustom) {
+        amount = 26 + parseFloat(formData.contributionAmount);
+      } else if (isPooja) {
+        amount = 26;
       } else if (hasCustom) {
         amount = parseFloat(formData.contributionAmount);
       }
