@@ -44,8 +44,7 @@ export const createRegistration = async (registrationData) => {
 
     // Generate confirmation number first using a random number
     const randomNum = Math.floor(Math.random() * 1000000).toString().padStart(6, '0');
-    const tempDocId = `temp-${randomNum}`;
-    const confirmationNumber = generateConfirmationNumber(tempDocId, registrationData.eventLocation);
+    const confirmationNumber = generateConfirmationNumber(randomNum, registrationData.eventLocation);
 
     const registrationWithMetadata = {
       ...registrationData,

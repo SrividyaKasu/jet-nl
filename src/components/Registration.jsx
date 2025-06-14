@@ -177,6 +177,8 @@ const Registration = () => {
 
       // Reset form
       setFormData({
+        name: user.displayName || '',
+        email: user.email || '',
         phone: '',
         city: '',
         eventLocation: '',
@@ -196,6 +198,8 @@ const Registration = () => {
 
   const resetForm = () => {
     setFormData({
+      name: user.displayName || '',
+      email: user.email || '',
       phone: '',
       city: '',
       eventLocation: '',
