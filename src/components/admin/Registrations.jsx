@@ -72,6 +72,7 @@ const Registrations = () => {
     try {
       // Prepare data for export
       const exportData = filteredRegistrations.map(reg => ({
+        'Confirmation #': reg.confirmationNumber || 'N/A',
         Name: reg.name,
         Email: reg.email,
         Phone: reg.phone,
@@ -139,6 +140,7 @@ const Registrations = () => {
         <table className="registrations-table">
           <thead>
             <tr>
+              <th>Confirmation #</th>
               <th>Name</th>
               <th>Email</th>
               <th>Phone</th>
@@ -153,6 +155,7 @@ const Registrations = () => {
           <tbody>
             {currentRegistrations.map(reg => (
               <tr key={reg.id}>
+                <td>{reg.confirmationNumber || 'N/A'}</td>
                 <td>{reg.name}</td>
                 <td>{reg.email}</td>
                 <td>{reg.phone}</td>

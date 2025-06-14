@@ -63,6 +63,7 @@ const LocationPage = () => {
   const exportToExcel = () => {
     try {
       const exportData = registrations.map(reg => ({
+        'Confirmation #': reg.confirmationNumber || 'N/A',
         Name: reg.name,
         Email: reg.email,
         Phone: reg.phone,
@@ -99,19 +100,21 @@ const LocationPage = () => {
     <div className="location-page">
       <div className="location-header">
         <h1>{location.charAt(0).toUpperCase() + location.slice(1)} Registrations</h1>
-        <button onClick={exportToExcel} className="export-button">
-          Export to Excel
-        </button>
+        <div className="location-actions">
+          <button onClick={exportToExcel} className="export-btn">
+            Export to Excel
+          </button>
+        </div>
       </div>
 
-      <div className="registration-summary">
-        <div className="summary-item">
-          <span className="summary-label">Total Adults:</span>
-          <span className="summary-value">{totals.adults}</span>
+      <div className="totals">
+        <div className="total-item">
+          <span>Total Adults:</span>
+          <span>{totals.adults}</span>
         </div>
-        <div className="summary-item">
-          <span className="summary-label">Total Children:</span>
-          <span className="summary-value">{totals.kids}</span>
+        <div className="total-item">
+          <span>Total Children:</span>
+          <span>{totals.kids}</span>
         </div>
       </div>
 
@@ -119,6 +122,7 @@ const LocationPage = () => {
         <table className="registrations-table">
           <thead>
             <tr>
+              <th>Confirmation #</th>
               <th>Name</th>
               <th>Email</th>
               <th>Phone</th>
@@ -132,6 +136,7 @@ const LocationPage = () => {
           <tbody>
             {currentRegistrations.map(reg => (
               <tr key={reg.id}>
+                <td>{reg.confirmationNumber || 'N/A'}</td>
                 <td>{reg.name}</td>
                 <td>{reg.email}</td>
                 <td>{reg.phone}</td>
@@ -139,7 +144,9 @@ const LocationPage = () => {
                 <td>{reg.programType}</td>
                 <td>{reg.numAdults || 0}</td>
                 <td>{reg.numKids || 0}</td>
-                <td>{reg.createdAt?.toDate?.().toLocaleDateString() || 'N/A'}</td>
+                <td>
+                  {reg.createdAt?.toDate?.().toLocaleDateString() || 'N/A'}
+                </td>
               </tr>
             ))}
           </tbody>
