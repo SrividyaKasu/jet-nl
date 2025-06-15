@@ -54,7 +54,9 @@ const Registration = () => {
 
   // Initialize auth state listener
   useEffect(() => {
+    console.log('Setting up auth state listener');
     const unsubscribe = onAuthChange((currentUser) => {
+      console.log('Auth state changed:', currentUser);
       setUser(currentUser);
       setAuthInitialized(true);
 
@@ -335,7 +337,7 @@ const Registration = () => {
               disabled={loading || authMethod === 'google'}
             />
           </div>
-           <div className="form-group">
+          <div className="form-group">
             <label htmlFor="name">Full Name *</label>
             <input
               type="text"

@@ -19,12 +19,11 @@ const googleProvider = new GoogleAuthProvider();
 // Sign in with Google
 export const signInWithGoogle = async () => {
   try {
+    console.log('Attempting Google sign in');
     const auth = getFirebaseAuth();
     const result = await signInWithPopup(auth, googleProvider);
-    return {
-      user: result.user,
-      token: await result.user.getIdToken()
-    };
+    console.log('Google sign in successful:', result.user);
+    return result.user;
   } catch (error) {
     console.error('Google sign in failed:', error);
     throw new Error(error.message || 'Failed to sign in with Google');
@@ -34,8 +33,10 @@ export const signInWithGoogle = async () => {
 // Sign out
 export const signOutUser = async () => {
   try {
+    console.log('Attempting sign out');
     const auth = getFirebaseAuth();
     await signOut(auth);
+    console.log('Sign out successful');
   } catch (error) {
     console.error('Sign out failed:', error);
     throw new Error(error.message || 'Failed to sign out');
@@ -57,13 +58,12 @@ export const getCurrentUser = () => {
   });
 };
 
-// Listen to auth state changes
+// Auth state change listener
 export const onAuthChange = (callback) => {
-  try {
-    const auth = getFirebaseAuth();
-    return onAuthStateChanged(auth, callback);
-  } catch (error) {
-    console.error('Auth state change listener failed:', error);
-    throw new Error(error.message || 'Failed to listen to auth changes');
-  }
+  console.log('Setting up auth state change listener');
+  const auth = getFirebaseAuth();
+  return onAuthStateChanged(auth, (user) => {
+    console.log('Auth state changed:', user);
+    callback(user);
+  });
 }; 
