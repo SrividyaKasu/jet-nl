@@ -205,25 +205,31 @@
   font-size: 0.9rem;
 }
 
-.signout-btn {
+.sign-out-btn {
   background-color: #dc3545;
   color: white;
-  padding: 0.5rem 1rem;
+  padding: 0.7rem 1.5rem;
   border: none;
   border-radius: 4px;
-  font-size: 0.9rem;
+  font-size: 1rem;
   cursor: pointer;
-  transition: background-color 0.3s ease;
+  transition: background-color 0.3s, box-shadow 0.2s;
+  margin-left: 1rem;
+  margin-top: 0.5rem;
+  margin-bottom: 0.5rem;
+  box-shadow: 0 2px 6px rgba(220, 53, 69, 0.08);
   white-space: nowrap;
 }
 
-.signout-btn:hover {
-  background-color: #c82333;
+.sign-out-btn:hover:not(:disabled) {
+  background-color: #b52a37;
+  box-shadow: 0 4px 12px rgba(220, 53, 69, 0.15);
 }
 
-.signout-btn:disabled {
+.sign-out-btn:disabled {
   background-color: #ccc;
   cursor: not-allowed;
+  box-shadow: none;
 }
 
 .registration-form {
@@ -389,7 +395,7 @@ label[for="numKids"]::after {
     width: 100%;
   }
 
-  .signout-btn {
+  .sign-out-btn {
     width: 100%;
   }
 
