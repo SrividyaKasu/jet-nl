@@ -324,18 +324,6 @@ const Registration = () => {
             </div>
           )}
           <div className="form-group">
-            <label htmlFor="name">Full Name *</label>
-            <input
-              type="text"
-              id="name"
-              name="name"
-              value={formData.name}
-              onChange={handleChange}
-              required
-              disabled={loading}
-            />
-          </div>
-          <div className="form-group">
             <label htmlFor="email">Email Address *</label>
             <input
               type="email"
@@ -345,6 +333,18 @@ const Registration = () => {
               onChange={handleChange}
               required
               disabled={loading || authMethod === 'google'}
+            />
+          </div>
+           <div className="form-group">
+            <label htmlFor="name">Full Name *</label>
+            <input
+              type="text"
+              id="name"
+              name="name"
+              value={formData.name}
+              onChange={handleChange}
+              required
+              disabled={loading}
             />
           </div>
           <div className="form-group">
