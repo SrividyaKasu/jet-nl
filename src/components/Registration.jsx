@@ -27,6 +27,7 @@ const Registration = () => {
   const [confirmationNumber, setConfirmationNumber] = useState(null);
   const [user, setUser] = useState(null);
   const [authInitialized, setAuthInitialized] = useState(false);
+  const [authMethod, setAuthMethod] = useState(null); // 'google' or 'email'
   const captchaContainer = useRef(null);
   const [captchaRendered, setCaptchaRendered] = useState(false);
 
@@ -80,19 +81,31 @@ const Registration = () => {
     try {
       setLoading(true);
       setError(null);
-      const { user: signedInUser } = await signInWithGoogle();
-      setUser(signedInUser);
-      setFormData(prev => ({
-        ...prev,
-        name: signedInUser.displayName || '',
-        email: signedInUser.email || ''
-      }));
-    } catch (error) {
-      console.error('Google sign in failed:', error);
+      const user = await signInWithGoogle();
+      setUser(user);
+      setAuthMethod('google');
+      if (user?.email) {
+        setFormData(prev => ({
+          ...prev,
+          email: user.email,
+          name: user.displayName || ''
+        }));
+      }
+    } catch (err) {
+      console.error('Error signing in with Google:', err);
       setError('Failed to sign in with Google. Please try again.');
     } finally {
       setLoading(false);
     }
+  };
+
+  const handleEmailAuth = () => {
+    if (!formData.email) {
+      setError('Please enter your email address');
+      return;
+    }
+    setAuthMethod('email');
+    setUser({ email: formData.email }); // Set user with email for form validation
   };
 
   const handleSignOut = async () => {
@@ -264,195 +277,200 @@ const Registration = () => {
 
       {!user ? (
         <div className="login-section">
-          <p>Please sign in with your Google account to continue with registration</p>
-          <button
-            className="google-signin-btn"
-            onClick={handleGoogleSignIn}
-            disabled={loading}
-          >
-            {loading ? 'Signing in...' : 'Sign in with Google'}
-          </button>
+          <p>Please sign in with your Google account or enter your email to continue with registration</p>
+          <div className="auth-options">
+            <button
+              className="google-signin-btn"
+              onClick={handleGoogleSignIn}
+              disabled={loading}
+            >
+              {loading ? 'Signing in...' : 'Sign in with Google'}
+            </button>
+            <div className="auth-divider">
+              <span>or</span>
+            </div>
+            <div className="email-auth">
+              <input
+                type="email"
+                name="email"
+                value={formData.email}
+                onChange={handleChange}
+                placeholder="Enter your email address"
+                className="email-input"
+                disabled={loading}
+              />
+              <button
+                className="email-continue-btn"
+                onClick={handleEmailAuth}
+                disabled={loading || !formData.email}
+              >
+                Continue with Email
+              </button>
+            </div>
+          </div>
         </div>
       ) : (
-        <>
-          <div className="user-info">
-            <img src={user.photoURL} alt={user.displayName} className="user-avatar" />
-            <div className="user-details">
-              <p>Signed in as: {user.displayName}</p>
+        <form onSubmit={handleSubmit} className="registration-form">
+          {authMethod === 'google' && (
+            <div className="user-info">
+              <p>Signed in as: {user.email}</p>
               <button
-                className="signout-btn"
+                type="button"
                 onClick={handleSignOut}
-                disabled={loading}
+                className="sign-out-btn"
               >
                 Sign Out
               </button>
             </div>
+          )}
+          <div className="form-group">
+            <label htmlFor="name">Full Name *</label>
+            <input
+              type="text"
+              id="name"
+              name="name"
+              value={formData.name}
+              onChange={handleChange}
+              required
+              disabled={loading}
+            />
           </div>
-
-          <form className="registration-form" onSubmit={handleSubmit}>
+          <div className="form-group">
+            <label htmlFor="email">Email Address *</label>
+            <input
+              type="email"
+              id="email"
+              name="email"
+              value={formData.email}
+              onChange={handleChange}
+              required
+              disabled={loading || authMethod === 'google'}
+            />
+          </div>
+          <div className="form-group">
+            <label htmlFor="phone">Phone Number *</label>
+            <input
+              type="tel"
+              id="phone"
+              name="phone"
+              value={formData.phone}
+              onChange={handleChange}
+              required
+              disabled={loading}
+            />
+          </div>
+          <div className="form-group">
+            <label htmlFor="city">City *</label>
+            <input
+              type="text"
+              id="city"
+              name="city"
+              value={formData.city}
+              onChange={handleChange}
+              required
+              disabled={loading}
+            />
+          </div>
+          <div className="form-group">
+            <label htmlFor="eventLocation">Event Location *</label>
+            <select
+              id="eventLocation"
+              name="eventLocation"
+              value={formData.eventLocation}
+              onChange={handleChange}
+              required
+              disabled={loading}
+            >
+              <option value="">Select Location</option>
+              <option value="amstelveen">Amstelveen</option>
+              <option value="denhaag">Den Haag</option>
+              <option value="eindhoven">Eindhoven</option>
+            </select>
+          </div>
+          {formData.eventLocation && (
             <div className="form-group">
-              <label htmlFor="email">Email Address *</label>
-              <input
-                type="email"
-                id="email"
-                name="email"
-                value={formData.email}
-                onChange={handleChange}
-                required
-                placeholder="Enter your email address"
-                disabled={true}
-              />
-            </div>
-
-            <div className="form-group">
-              <label htmlFor="name">Full Name *</label>
-              <input
-                type="text"
-                id="name"
-                name="name"
-                value={formData.name}
-                onChange={handleChange}
-                required
-                placeholder="Enter your full name"
-                disabled={loading}
-              />
-            </div>
-
-            <div className="form-group">
-              <label htmlFor="phone">Phone Number *</label>
-              <input
-                type="tel"
-                id="phone"
-                name="phone"
-                value={formData.phone}
-                onChange={handleChange}
-                required
-                placeholder="Enter your phone number"
-                disabled={loading}
-              />
-            </div>
-
-            <div className="form-group">
-              <label htmlFor="city">City *</label>
-              <input
-                type="text"
-                id="city"
-                name="city"
-                value={formData.city}
-                onChange={handleChange}
-                required
-                placeholder="Enter your city"
-                disabled={loading}
-              />
-            </div>
-
-            <div className="form-group">
-              <label htmlFor="eventLocation">Event Location *</label>
-              <select
-                id="eventLocation"
-                name="eventLocation"
-                value={formData.eventLocation}
-                onChange={handleChange}
-                required
-                disabled={loading}
-              >
-                <option value="">Select Location</option>
-                <option value="amstelveen">Amstelveen</option>
-                <option value="denhaag">Den Haag</option>
-                <option value="eindhoven">Eindhoven</option>
-              </select>
-            </div>
-
-            <div className="form-group">
-              <label htmlFor="programType">Type of Program *</label>
+              <label htmlFor="programType">Program Type *</label>
               <select
                 id="programType"
                 name="programType"
                 value={formData.programType}
                 onChange={handleChange}
                 required
-                disabled={loading || !formData.eventLocation}
+                disabled={loading}
               >
                 <option value="">Select Program Type</option>
-                {availableProgramTypes.map((option) => (
+                {programTypeOptions[formData.eventLocation]?.map(option => (
                   <option key={option.value} value={option.value}>
                     {option.label}
                   </option>
                 ))}
               </select>
             </div>
-
-            <div className="form-row">
-              <div className="form-group half">
-                <label htmlFor="numAdults">Number of Adults *</label>
-                <input
-                  type="number"
-                  id="numAdults"
-                  name="numAdults"
-                  value={formData.numAdults}
-                  onChange={handleChange}
-                  min="1"
-                  required
-                  disabled={loading}
-                />
-              </div>
-
-              <div className="form-group half">
-                <label htmlFor="numKids">Number of Children</label>
-                <input
-                  type="number"
-                  id="numKids"
-                  name="numKids"
-                  value={formData.numKids}
-                  onChange={handleChange}
-                  min="0"
-                  disabled={loading}
-                />
-              </div>
-            </div>
-
-            <div className="form-group checkbox-group">
-              <label>
-                <input
-                  type="checkbox"
-                  name="wantsToContribute"
-                  checked={formData.wantsToContribute}
-                  onChange={handleChange}
-                />
-                I would like to make a contribution
-              </label>
-            </div>
-
-            {formData.wantsToContribute && (
-              <div className="form-group">
-                <label htmlFor="contributionAmount">Contribution Amount (€) *</label>
-                <input
-                  type="number"
-                  id="contributionAmount"
-                  name="contributionAmount"
-                  min="1"
-                  step="0.01"
-                  value={formData.contributionAmount}
-                  onChange={handleChange}
-                  required
-                />
-              </div>
-            )}
-
-            <div className="captcha-container" ref={captchaContainer}></div>
-
-            <button
-              type="submit"
-              className={`submit-btn ${loading ? 'loading' : ''}`}
+          )}
+          <div className="form-group">
+            <label htmlFor="numAdults">Number of Adults *</label>
+            <input
+              type="number"
+              id="numAdults"
+              name="numAdults"
+              value={formData.numAdults}
+              onChange={handleChange}
+              min="1"
+              required
               disabled={loading}
-            >
-              {loading ? 'Registering...' : 'Register Now'}
-            </button>
-          </form>
-        </>
+            />
+          </div>
+          <div className="form-group">
+            <label htmlFor="numKids">Number of Children</label>
+            <input
+              type="number"
+              id="numKids"
+              name="numKids"
+              value={formData.numKids}
+              onChange={handleChange}
+              min="0"
+              disabled={loading}
+            />
+          </div>
+          <div className="form-group checkbox">
+            <label>
+              <input
+                type="checkbox"
+                name="wantsToContribute"
+                checked={formData.wantsToContribute}
+                onChange={handleChange}
+                disabled={loading}
+              />
+              I would like to contribute to the program
+            </label>
+          </div>
+          {formData.wantsToContribute && (
+            <div className="form-group">
+              <label htmlFor="contributionAmount">Contribution Amount (EUR)</label>
+              <input
+                type="number"
+                id="contributionAmount"
+                name="contributionAmount"
+                value={formData.contributionAmount}
+                onChange={handleChange}
+                min="1"
+                step="0.01"
+                disabled={loading}
+              />
+            </div>
+          )}
+          <div ref={captchaContainer} className="captcha-container"></div>
+          <button
+            type="submit"
+            className={`submit-btn ${loading ? 'loading' : ''}`}
+            disabled={loading}
+          >
+            {loading ? 'Registering...' : 'Register Now'}
+          </button>
+        </form>
       )}
     </div>
   );
 };
 
-export default Registration; 
+export default Registration;
