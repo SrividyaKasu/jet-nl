@@ -291,20 +291,6 @@ const Registration = () => {
 
           <form className="registration-form" onSubmit={handleSubmit}>
             <div className="form-group">
-              <label htmlFor="name">Full Name *</label>
-              <input
-                type="text"
-                id="name"
-                name="name"
-                value={formData.name}
-                onChange={handleChange}
-                required
-                placeholder="Enter your full name"
-                disabled={loading}
-              />
-            </div>
-
-            <div className="form-group">
               <label htmlFor="email">Email Address *</label>
               <input
                 type="email"
@@ -315,6 +301,20 @@ const Registration = () => {
                 required
                 placeholder="Enter your email address"
                 disabled={true}
+              />
+            </div>
+
+            <div className="form-group">
+              <label htmlFor="name">Full Name *</label>
+              <input
+                type="text"
+                id="name"
+                name="name"
+                value={formData.name}
+                onChange={handleChange}
+                required
+                placeholder="Enter your full name"
+                disabled={loading}
               />
             </div>
 
