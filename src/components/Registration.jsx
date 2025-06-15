@@ -5,16 +5,18 @@ import { sendConfirmationEmail } from '../services/emailService';
 import { useCaptcha } from '../hooks/useCaptcha';
 import { collection, addDoc, serverTimestamp } from 'firebase/firestore';
 import { db } from '../firebase';
+import { useSearchParams } from 'react-router-dom';
 import './Registration.css';
 
 const Registration = () => {
+  const [searchParams] = useSearchParams();
   const [formData, setFormData] = useState({
     name: '',
     email: '',
     phone: '',
     city: '',
-    eventLocation: '',
-    programType: '',
+    eventLocation: searchParams.get('location') || '',
+    programType: searchParams.get('program') || '',
     numAdults: 1,
     numKids: 0,
     wantsToContribute: false,
@@ -459,6 +461,7 @@ const Registration = () => {
                 step="0.01"
                 disabled={loading}
               />
+              <span>As a token of gratitude, all contributions over €150 will receive a special Souvenir personally from Swami Varu carrying his grace and blessings.</span>
             </div>
           )}
           <div ref={captchaContainer} className="captcha-container"></div>

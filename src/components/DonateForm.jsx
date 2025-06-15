@@ -6,7 +6,7 @@ const DonateForm = () => {
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState('');
 
-  const predefinedAmounts = [10, 25, 50, 100, 250];
+  const predefinedAmounts = [10, 25, 50, 100, 150, 200,  250];
 
   const handleSubmit = async (e) => {
     e.preventDefault();
@@ -65,6 +65,7 @@ const DonateForm = () => {
     <div className="donate-form">
       <h2>Make a Contribution</h2>
       <p>Your support helps us continue our mission</p>
+      <p>As a token of gratitude, all contributions over €150 will receive a special Souvenir personally from Swami Varu carrying his grace and blessings.</p>
 
       {error && <div className="error-message">{error}</div>}
 

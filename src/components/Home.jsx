@@ -1,4 +1,5 @@
 import React from 'react';
+import { Link } from 'react-router-dom';
 import './Home.css';
 
 const Home = () => {
@@ -17,6 +18,7 @@ const Home = () => {
                 <th>Date</th>
                 <th>Event</th>
                 <th>Location</th>
+                <th>Action</th>
               </tr>
             </thead>
             <tbody>
@@ -24,16 +26,40 @@ const Home = () => {
                 <td>July 18th 2025, 5 PM onwards</td>
                 <td>Lakshmi Naryana Pooja</td>
                 <td>US Open Zaal, Bovenkerkerweg 81, 1187 XC Amstelveen</td>
+                <td>
+                  <Link 
+                    to="/registration?location=amstelveen&program=lakshmi-narayana-pooja" 
+                    className="register-link"
+                  >
+                    Register Now
+                  </Link>
+                </td>
               </tr>
               <tr>
                 <td>July 19th 2025, 5 PM onwards</td>
                 <td>Sita Rama Kalyanam</td>
                 <td>ASAN Arya Samaj Nederland, Van der Kunstraat 75, 2521 BA Den Haag</td>
+                <td>
+                  <Link 
+                    to="/registration?location=denhaag&program=sita-rama-kalyanam" 
+                    className="register-link"
+                  >
+                    Register Now
+                  </Link>
+                </td>
               </tr>
               <tr>
                 <td>July 20th 2025, 1 PM onwards</td>
                 <td>Dhanalakshmi Pooja</td>
                 <td>Eindhoven</td>
+                <td>
+                  <Link 
+                    to="/registration?location=eindhoven&program=dhana-lakshmi-pooja" 
+                    className="register-link"
+                  >
+                    Register Now
+                  </Link>
+                </td>
               </tr>
             </tbody>
           </table>
@@ -42,10 +68,7 @@ const Home = () => {
 
       <section className="connect-section">
         <h2>Connect with us</h2>
-        <div className="contact-info">
-          <p>📞 +31 (0) 611870997</p>
-          <p>📞 +31 (0) 684859730</p>
-         
+        <div className="contact-info">   
           <p>✉️ jeeyartrustnl@gmail.com</p>
           <p>📍 Amsterdam, Netherlands</p>
         </div>

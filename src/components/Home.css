@@ -78,6 +78,18 @@
   background: rgba(255, 215, 0, 0.05);
 }
 
+.register-link {
+  color: #8b0000;
+  text-decoration: none;
+  font-weight: 500;
+  transition: color 0.2s ease;
+}
+
+.register-link:hover {
+  color: #FFA500;
+  text-decoration: underline;
+}
+
 .events-section {
   margin-bottom: 4rem;
 }
