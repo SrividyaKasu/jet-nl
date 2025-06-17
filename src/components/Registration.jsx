@@ -7,6 +7,7 @@ import { collection, addDoc, serverTimestamp } from 'firebase/firestore';
 import { db } from '../firebase';
 import { useSearchParams } from 'react-router-dom';
 import './Registration.css';
+import Modal from './Modal';
 
 const Registration = () => {
   const [searchParams] = useSearchParams();
@@ -32,6 +33,7 @@ const Registration = () => {
   const [authMethod, setAuthMethod] = useState(null); // 'google' or 'email'
   const captchaContainer = useRef(null);
   const [captchaRendered, setCaptchaRendered] = useState(false);
+  const [isPrivacyModalOpen, setIsPrivacyModalOpen] = useState(false);
 
   const programTypeOptions = {
     amstelveen: [
@@ -465,6 +467,17 @@ const Registration = () => {
             </div>
           )}
           <div ref={captchaContainer} className="captcha-container"></div>
+          
+          <div className="privacy-link">
+            <button 
+              type="button" 
+              onClick={() => setIsPrivacyModalOpen(true)}
+              className="privacy-button"
+            >
+              Read Privacy Statement
+            </button>
+          </div>
+
           <button
             type="submit"
             className={`submit-btn ${loading ? 'loading' : ''}`}
@@ -474,6 +487,22 @@ const Registration = () => {
           </button>
         </form>
       )}
+
+      <Modal 
+        isOpen={isPrivacyModalOpen} 
+        onClose={() => setIsPrivacyModalOpen(false)}
+      >
+        <div className="privacy-statement">
+          <h3>Privacy Statement</h3>
+          <p>By registering for this event, you agree to the following:</p>
+          <ul>
+            <li>Your personal information will be used solely for event registration and communication purposes.</li>
+            <li>We will not share your information with third parties without your explicit consent.</li>
+            <li>Your payment information is processed securely through Stripe and is not stored on our servers.</li>
+            <li>You may request deletion of your data at any time by contacting us.</li>          
+          </ul>
+        </div>
+      </Modal>
     </div>
   );
 };
