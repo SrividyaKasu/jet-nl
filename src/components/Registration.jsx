@@ -411,6 +411,11 @@ const Registration = () => {
                   </option>
                 ))}
               </select>
+              {formData.programType && formData.programType.toLowerCase().includes('darshan') && (
+                <div className="darshan-message" style={{ color: '#800020', marginTop: '8px', fontWeight: 'bold' }}>
+                  Darshan timings will be communicated in a separate email.
+                </div>
+              )}
             </div>
           )}
           <div className="form-group">
