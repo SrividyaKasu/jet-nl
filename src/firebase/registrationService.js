@@ -7,7 +7,10 @@ import {
   orderBy, 
   serverTimestamp,
   getDocs as getDocsOnce,
-  limit
+  limit,
+  doc,
+  getDoc,
+  updateDoc
 } from 'firebase/firestore';
 import { getDb } from './config';
 
@@ -115,10 +118,50 @@ export const getRegistrationsByDateRange = async (startDate, endDate) => {
   }
 };
 
+export const getRegistrationById = async (id) => {
+  try {
+    const db = await getDb();
+    const docRef = doc(db, COLLECTION_NAME, id); 
+    const docSnap = await getDoc(docRef);
+    
+    if (docSnap.exists()) {
+      return {
+        id: docSnap.id,
+        ...docSnap.data()
+      };
+    } else {
+      throw new Error('Registration not found');
+    }
+  } catch (error) {
+    throw new Error('Failed to fetch registration: ' + error.message);
+  }
+};
+
 // Helper function to generate confirmation number
 const generateConfirmationNumber = (docId, eventLocation) => {
   const locationCode = eventLocation.substring(0, 3).toUpperCase();
   const uniqueId = docId.slice(-6).toUpperCase();
   const timestamp = new Date().getTime().toString().slice(-4);
   return `JET-${locationCode}-${uniqueId}-${timestamp}`;
+};
+
+// Update registration status
+export const updateRegistrationStatus = async (id, newStatus) => {
+  try {
+    const db = await getDb();
+    const docRef = doc(db, COLLECTION_NAME, id);
+    await updateDoc(docRef, {
+      status: newStatus,
+      updatedAt: serverTimestamp()
+    });
+    return true;
+  } catch (error) {
+    if (error.code === 'permission-denied') {
+      throw new Error('Access to the database is denied. Please check Firebase rules.');
+    }
+    if (error.code === 'unavailable') {
+      throw new Error('Database service is currently unavailable. Please try again later.');
+    }
+    throw new Error('Failed to update registration status: ' + error.message);
+  }
 }; 

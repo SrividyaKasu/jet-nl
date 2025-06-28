@@ -22,6 +22,7 @@ import './App.css';
 import DonateForm from './components/DonateForm';
 import PaymentSuccess from './components/PaymentSuccess';
 import PaymentFailed from './components/PaymentFailed';
+import RegistrationDetails from './components/RegistrationDetails';
 
 const Layout = () => (
   <div className="app">
@@ -62,6 +63,7 @@ const router = createBrowserRouter(
       <Route path="/contribute" element={<DonateForm />} />
       <Route path="/payment-success" element={<PaymentSuccess />} />
       <Route path="/payment-failed" element={<PaymentFailed />} />
+      <Route path="/registration/:id" element={<RegistrationDetails/>} />
 
       {/* Admin Routes */}
       <Route path="/admin" element={<AdminLayout />}>
