@@ -118,24 +118,32 @@ export const getRegistrationsByDateRange = async (startDate, endDate) => {
   }
 };
 
-export const getRegistrationById = async (id) => {
+export const getRegistrationById = async (confirmationNumber) => {
   try {
     const db = await getDb();
-    const docRef = doc(db, COLLECTION_NAME, id); 
-    const docSnap = await getDoc(docRef);
-    
-    if (docSnap.exists()) {
-      return {
-        id: docSnap.id,
-        ...docSnap.data()
-      };
-    } else {
+    const q = query(
+      collection(db, COLLECTION_NAME),
+      where('confirmationNumber', '==', confirmationNumber)
+    );
+
+    const querySnapshot = await getDocs(q);
+
+    if (querySnapshot.empty) {
       throw new Error('Registration not found');
     }
+    const docSnap = querySnapshot.docs[0];
+
+
+    return {
+      id: docSnap.id,
+      ...docSnap.data()
+    };
+
   } catch (error) {
     throw new Error('Failed to fetch registration: ' + error.message);
   }
 };
+
 
 // Helper function to generate confirmation number
 const generateConfirmationNumber = (docId, eventLocation) => {

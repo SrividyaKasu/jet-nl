@@ -1,7 +1,7 @@
 import React from 'react';
 import { useParams } from 'react-router-dom';
 import { useEffect, useState } from 'react';
-import { getRegistrationById, updateRegistrationStatus } from '../firebase/registrationService';
+import { getRegistrationByConfirmationNumber, updateRegistrationStatus } from '../firebase/registrationService';
 import { getCurrentUser } from '../firebase/authService';
 import './RegistrationDetails.css';
 
@@ -18,7 +18,7 @@ function RegistrationDetails() {
       try {
         setLoading(true);
         setError(null);
-        const registrationData = await getRegistrationById(id);
+        const registrationData = await getRegistrationByConfirmationNumber(id);
         console.log('Registration data:', registrationData);
         setRegistration(registrationData);
       } catch (error) {
