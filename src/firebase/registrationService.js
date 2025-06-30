@@ -9,7 +9,6 @@ import {
   getDocs as getDocsOnce,
   limit,
   doc,
-  getDoc,
   updateDoc
 } from 'firebase/firestore';
 import { getDb } from './config';
@@ -118,7 +117,7 @@ export const getRegistrationsByDateRange = async (startDate, endDate) => {
   }
 };
 
-export const getRegistrationById = async (confirmationNumber) => {
+export const getRegistrationByConfirmationNumber = async (confirmationNumber) => {
   try {
     const db = await getDb();
     const q = query(
