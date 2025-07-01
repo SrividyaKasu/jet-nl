@@ -3,10 +3,12 @@ import './DonateForm.css';
 
 const DonateForm = () => {
   const [amount, setAmount] = useState('');
+  const [name, setName] = useState('');
+  const [email, setEmail] = useState('');
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState('');
 
-  const predefinedAmounts = [10, 25, 50, 100, 150, 200,  250];
+  const predefinedAmounts = [10, 25, 50, 100, 150, 200, 250];
 
   const handleSubmit = async (e) => {
     e.preventDefault();
@@ -14,6 +16,15 @@ const DonateForm = () => {
     setLoading(true);
 
     try {
+      // Store donation info in sessionStorage for use after payment success
+      const donationData = {
+        name,
+        email,
+        amount: parseFloat(amount),
+        timestamp: new Date().toISOString()
+      };
+      sessionStorage.setItem('pendingDonation', JSON.stringify(donationData));
+
       const response = await fetch('/api/create-payment-link', {
         method: 'POST',
         headers: {
@@ -22,7 +33,8 @@ const DonateForm = () => {
         body: JSON.stringify({
           amount: parseFloat(amount),
           description: 'Contribution to JET NL',
-          email:  undefined,
+          email: email,
+          name: name,
         }),
       });
 
@@ -70,6 +82,30 @@ const DonateForm = () => {
       {error && <div className="error-message">{error}</div>}
 
       <form onSubmit={handleSubmit}>
+        <div className="form-group">
+          <label htmlFor="name">Full Name *</label>
+          <input
+            type="text"
+            id="name"
+            value={name}
+            onChange={(e) => setName(e.target.value)}
+            placeholder="Enter your full name"
+            required
+          />
+        </div>
+
+        <div className="form-group">
+          <label htmlFor="email">Email Address *</label>
+          <input
+            type="email"
+            id="email"
+            value={email}
+            onChange={(e) => setEmail(e.target.value)}
+            placeholder="Enter your email address"
+            required
+          />
+        </div>
+
         <div className="amount-buttons">
           {predefinedAmounts.map((preset) => (
             <button
@@ -84,7 +120,7 @@ const DonateForm = () => {
         </div>
 
         <div className="form-group">
-          <label htmlFor="custom-amount">Custom Amount (€)</label>
+          <label htmlFor="custom-amount">Custom Amount (€) *</label>
           <input
             type="number"
             id="custom-amount"
@@ -100,7 +136,7 @@ const DonateForm = () => {
         <button 
           type="submit" 
           className="submit-button" 
-          disabled={loading || !amount}
+          disabled={loading || !amount || !name || !email}
         >
           {loading ? 'Processing...' : 'Contribute'}
         </button>

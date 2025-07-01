@@ -47,6 +47,32 @@
   font-size: 1.1rem;
 }
 
+.registration-success-message,
+.donation-success-message {
+  margin-bottom: 2rem;
+  padding: 1.5rem;
+  border-radius: 8px;
+  background-color: #f8f9fa;
+  border-left: 4px solid #28a745;
+}
+
+.registration-success-message h2,
+.donation-success-message h2 {
+  color: #28a745;
+  margin-bottom: 1rem;
+  font-size: 1.5rem;
+}
+
+.souvenir-message {
+  background-color: #fff3cd;
+  border: 1px solid #ffeaa7;
+  border-radius: 6px;
+  padding: 1rem;
+  margin: 1rem 0;
+  color: #856404;
+  font-weight: 500;
+}
+
 .home-button {
   display: inline-block;
   margin-top: 2rem;

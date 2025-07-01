@@ -32,7 +32,7 @@ export default async function handler(req, res) {
     }
 
     console.log('Request body:', req.body);
-    const { amount, description, email } = req.body;
+    const { amount, description, email, name } = req.body;
 
     // Validate required fields
     if (!amount || !description) {
@@ -59,6 +59,7 @@ export default async function handler(req, res) {
     console.log('Creating payment link with params:', {
       priceId: price.id,
       email: email || 'not provided',
+      name: name || 'not provided',
       origin: req.headers.origin
     });
 
@@ -77,7 +78,9 @@ export default async function handler(req, res) {
       },
       payment_intent_data: {
         metadata: {
-          failure_url: `${req.headers.origin}/payment-failed`
+          failure_url: `${req.headers.origin}/payment-failed`,
+          customer_name: name || '',
+          customer_email: email || ''
         }
       },
       customer_creation: 'always'
