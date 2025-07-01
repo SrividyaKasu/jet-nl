@@ -5,6 +5,12 @@ emailjs.init(PUBLIC_KEY);
 
 export const sendConfirmationEmail = async (registrationData, confirmationNumber) => {
   try {
+    const message =
+    registrationData.wantsToContribute === true
+      ? 'We have received your contribution of ' + registrationData.contributionAmount + ' EUR. Thank you for your support!, We look forward to seeing you there!'
+      : 'Thank you for registering for the event. We look forward to seeing you there!';
+
+
     const templateParams = {
       to_name: registrationData.name,
       to_email: registrationData.email,
@@ -16,7 +22,8 @@ export const sendConfirmationEmail = async (registrationData, confirmationNumber
       num_kids: registrationData.numKids,
       city: registrationData.city,
       phone: registrationData.phone,
-      reply_to: registrationData.email
+      reply_to: registrationData.email,
+      message: message
     };
 
     const response = await emailjs.send(
