@@ -8,8 +8,6 @@ const DonateForm = () => {
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState('');
 
-  const predefinedAmounts = [10, 25, 50, 100, 150, 200, 250];
-
   const handleSubmit = async (e) => {
     e.preventDefault();
     setError('');
@@ -106,21 +104,8 @@ const DonateForm = () => {
           />
         </div>
 
-        <div className="amount-buttons">
-          {predefinedAmounts.map((preset) => (
-            <button
-              key={preset}
-              type="button"
-              className={`amount-button ${amount === preset.toString() ? 'active' : ''}`}
-              onClick={() => setAmount(preset.toString())}
-            >
-              €{preset}
-            </button>
-          ))}
-        </div>
-
         <div className="form-group">
-          <label htmlFor="custom-amount">Custom Amount (€) *</label>
+          <label htmlFor="custom-amount">Amount (€) *</label>
           <input
             type="number"
             id="custom-amount"
