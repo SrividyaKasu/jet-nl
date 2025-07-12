@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { collection, query, getDocs } from 'firebase/firestore';
+import { collection, query, getDocs, orderBy } from 'firebase/firestore';
 import { db } from '../../firebase';
 import * as XLSX from 'xlsx';
 import './Admin.css';
@@ -14,6 +14,7 @@ const Registrations = () => {
   const [error, setError] = useState(null);
   const [currentPage, setCurrentPage] = useState(1);
   const [searchQuery, setSearchQuery] = useState('');
+  const [sortOrder, setSortOrder] = useState('desc'); // 'desc' for newest first, 'asc' for oldest first
   const registrationsPerPage = 10;
 
   // Get current registrations
@@ -25,15 +26,18 @@ const Registrations = () => {
   // Change page
   const paginate = (pageNumber) => setCurrentPage(pageNumber);
 
-  // Reset page when location or search changes
+  // Reset page when location, search, or sort changes
   useEffect(() => {
     setCurrentPage(1);
-  }, [selectedLocation, searchQuery]);
+  }, [selectedLocation, searchQuery, sortOrder]);
 
   useEffect(() => {
     const fetchRegistrations = async () => {
       try {
-        const q = query(collection(db, 'registrations'));
+        const q = query(
+          collection(db, 'registrations'),
+          orderBy('createdAt', sortOrder)
+        );
         const querySnapshot = await getDocs(q);
         const data = querySnapshot.docs.map(doc => ({
           id: doc.id,
@@ -52,7 +56,7 @@ const Registrations = () => {
     };
 
     fetchRegistrations();
-  }, []);
+  }, [sortOrder]);
 
   // Filter registrations when location selection or search query changes
   useEffect(() => {
@@ -85,11 +89,23 @@ const Registrations = () => {
     setSearchQuery(e.target.value);
   };
 
+  const handleSortChange = (e) => {
+    setSortOrder(e.target.value);
+  };
+
+  const copyToClipboard = (text) => {
+    navigator.clipboard.writeText(text).then(() => {
+      // You could add a toast notification here
+      console.log('Copied to clipboard:', text);
+    });
+  };
+
   const exportToExcel = () => {
     try {
       // Prepare data for export
       const exportData = filteredRegistrations.map(reg => ({
         'Confirmation #': reg.confirmationNumber || 'N/A',
+        'Registration URL': reg.confirmationNumber ? `https://www.jetnl.org/registration/${reg.confirmationNumber}` : 'N/A',
         Name: reg.name,
         Email: reg.email,
         Phone: reg.phone,
@@ -155,6 +171,14 @@ const Registrations = () => {
                 {loc.charAt(0).toUpperCase() + loc.slice(1)}
               </option>
             ))}
+          </select>
+          <select
+            value={sortOrder}
+            onChange={handleSortChange}
+            className="sort-select"
+          >
+            <option value="desc">Newest First</option>
+            <option value="asc">Oldest First</option>
           </select>
           <button onClick={exportToExcel} className="export-btn">
             Export to Excel

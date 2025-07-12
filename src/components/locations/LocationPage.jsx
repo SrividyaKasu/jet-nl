@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { collection, query, where, getDocs } from 'firebase/firestore';
+import { collection, query, where, getDocs, orderBy } from 'firebase/firestore';
 import { db } from '../../firebase';
 import * as XLSX from 'xlsx';
 import { useParams } from 'react-router-dom';
@@ -14,6 +14,7 @@ const LocationPage = () => {
   const [totals, setTotals] = useState({ adults: 0, kids: 0 });
   const [currentPage, setCurrentPage] = useState(1);
   const [searchQuery, setSearchQuery] = useState('');
+  const [sortOrder, setSortOrder] = useState('desc'); // 'desc' for newest first, 'asc' for oldest first
   const registrationsPerPage = 10;
 
   // Get current registrations
@@ -25,17 +26,18 @@ const LocationPage = () => {
   // Change page
   const paginate = (pageNumber) => setCurrentPage(pageNumber);
 
-  // Reset page when search changes
+  // Reset page when search or sort changes
   useEffect(() => {
     setCurrentPage(1);
-  }, [searchQuery]);
+  }, [searchQuery, sortOrder]);
 
   useEffect(() => {
     const fetchRegistrations = async () => {
       try {
         const q = query(
           collection(db, 'registrations'),
-          where('eventLocation', '==', location)
+          where('eventLocation', '==', location),
+          orderBy('createdAt', sortOrder)
         );
         
         const querySnapshot = await getDocs(q);
@@ -57,7 +59,7 @@ const LocationPage = () => {
     if (location) {
       fetchRegistrations();
     }
-  }, [location]);
+  }, [location, sortOrder]);
 
   // Filter registrations when search query changes
   useEffect(() => {
@@ -89,10 +91,22 @@ const LocationPage = () => {
     setSearchQuery(e.target.value);
   };
 
+  const handleSortChange = (e) => {
+    setSortOrder(e.target.value);
+  };
+
+  const copyToClipboard = (text) => {
+    navigator.clipboard.writeText(text).then(() => {
+      // You could add a toast notification here
+      console.log('Copied to clipboard:', text);
+    });
+  };
+
   const exportToExcel = () => {
     try {
       const exportData = registrations.map(reg => ({
         'Confirmation #': reg.confirmationNumber || 'N/A',
+        'Registration URL': reg.confirmationNumber ? `https://www.jetnl.org/registration/${reg.confirmationNumber}` : 'N/A',
         Name: reg.name,
         Email: reg.email,
         Phone: reg.phone,
@@ -139,6 +153,14 @@ const LocationPage = () => {
               className="search-input"
             />
           </div>
+          <select
+            value={sortOrder}
+            onChange={handleSortChange}
+            className="sort-select"
+          >
+            <option value="desc">Newest First</option>
+            <option value="asc">Oldest First</option>
+          </select>
           <button onClick={exportToExcel} className="export-btn">
             Export to Excel
           </button>
@@ -161,6 +183,7 @@ const LocationPage = () => {
           <thead>
             <tr>
               <th>Confirmation #</th>
+              <th>Registration URL</th>
               <th>Name</th>
               <th>Email</th>
               <th>Phone</th>
@@ -175,6 +198,27 @@ const LocationPage = () => {
             {currentRegistrations.map(reg => (
               <tr key={reg.id}>
                 <td>{reg.confirmationNumber || 'N/A'}</td>
+                <td>
+                  {reg.confirmationNumber ? (
+                    <div className="url-cell">
+                      <input
+                        type="text"
+                        value={`https://www.jetnl.org/registration/${reg.confirmationNumber}`}
+                        readOnly
+                        className="url-input"
+                      />
+                      <button
+                        onClick={() => copyToClipboard(`https://www.jetnl.org/registration/${reg.confirmationNumber}`)}
+                        className="copy-btn"
+                        title="Copy URL"
+                      >
+                        📋
+                      </button>
+                    </div>
+                  ) : (
+                    'N/A'
+                  )}
+                </td>
                 <td>{reg.name}</td>
                 <td>{reg.email}</td>
                 <td>{reg.phone}</td>
