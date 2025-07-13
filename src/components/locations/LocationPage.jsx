@@ -183,7 +183,6 @@ const LocationPage = () => {
           <thead>
             <tr>
               <th>Confirmation #</th>
-              <th>Registration URL</th>
               <th>Name</th>
               <th>Email</th>
               <th>Phone</th>
@@ -198,27 +197,6 @@ const LocationPage = () => {
             {currentRegistrations.map(reg => (
               <tr key={reg.id}>
                 <td>{reg.confirmationNumber || 'N/A'}</td>
-                <td>
-                  {reg.confirmationNumber ? (
-                    <div className="url-cell">
-                      <input
-                        type="text"
-                        value={`https://www.jetnl.org/registration/${reg.confirmationNumber}`}
-                        readOnly
-                        className="url-input"
-                      />
-                      <button
-                        onClick={() => copyToClipboard(`https://www.jetnl.org/registration/${reg.confirmationNumber}`)}
-                        className="copy-btn"
-                        title="Copy URL"
-                      >
-                        📋
-                      </button>
-                    </div>
-                  ) : (
-                    'N/A'
-                  )}
-                </td>
                 <td>{reg.name}</td>
                 <td>{reg.email}</td>
                 <td>{reg.phone}</td>
