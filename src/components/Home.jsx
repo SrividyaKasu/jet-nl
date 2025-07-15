@@ -53,8 +53,8 @@ const Home = () => {
                   <Link 
                     to="/registration?location=eindhoven&program=dhana-lakshmi-pooja" 
                     className="event-button"
-                    title="Register for Dhanalakshmi Pooja">
-                    Dhanalakshmi Pooja
+                    title="Register for Darshan">
+                    Darshan
                     <i className="fa fa-sign-in"></i>
                   </Link>
                 </td>

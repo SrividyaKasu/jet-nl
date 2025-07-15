@@ -44,8 +44,7 @@ const Registration = () => {
       { value: 'sita-rama-kalyanam', label: 'Sita Rama Kalyanam (Free)' }
     ],
     eindhoven: [
-      { value: 'darshan', label: 'Darshan (Free)' },
-      { value: 'dhana-lakshmi-pooja', label: 'Dhanalakshmi Pooja (26 EUR/Family)' }
+      { value: 'darshan', label: 'Darshan (Free)' }
     ]
   };
 
