@@ -89,6 +89,20 @@ function RegistrationDetails() {
         </div>
 
         <div className="info-section">
+          <h3>Personal Information</h3>
+          <div className="info-grid">
+            <div className="info-item">
+              <label>Name:</label>
+              <span>{registration.name}</span>
+            </div>
+            <div className="info-item">
+              <label>Email:</label>
+              <span>{registration.email}</span>
+            </div>
+          </div>
+        </div>
+        
+        <div className="info-section">
           <h3>Event Details</h3>
           <div className="info-grid">
             <div className="info-item">
@@ -110,63 +124,6 @@ function RegistrationDetails() {
               </div>
             )}
           </div>
-        </div>
-
-        <div className="info-section">
-          <h3>Personal Information</h3>
-          <div className="info-grid">
-            <div className="info-item">
-              <label>Name:</label>
-              <span>{registration.name}</span>
-            </div>
-            <div className="info-item">
-              <label>Email:</label>
-              <span>{registration.email}</span>
-            </div>
-            <div className="info-item">
-              <label>Phone:</label>
-              <span>{registration.phone}</span>
-            </div>
-            <div className="info-item">
-              <label>City:</label>
-              <span>{registration.city}</span>
-            </div>
-          </div>
-        </div>
-
-        <div className="info-section">
-          <h3>Registration Status</h3>
-          <div className="info-grid">
-            <div className="info-item">
-              <label>Status:</label>
-              <span className={`status ${registration.status}`}>
-                {registration.status}
-              </span>
-            </div>
-            {registration.createdAt && (
-              <div className="info-item">
-                <label>Created:</label>
-                <span>
-                  {registration.createdAt.toDate ? 
-                    registration.createdAt.toDate().toLocaleString() : 
-                    new Date(registration.createdAt).toLocaleString()
-                  }
-                </span>
-              </div>
-            )}
-          </div>
-          
-          {canVerify && (
-            <div className="verify-section">
-              <button 
-                className="verify-button"
-                onClick={handleVerify}
-                disabled={verifying}
-              >
-                {verifying ? 'Verifying...' : 'Verify Registration'}
-              </button>
-            </div>
-          )}
         </div>
       </div>
     </div>
