@@ -184,8 +184,9 @@ const Registration = () => {
         // Store registration data in session storage
         sessionStorage.setItem('pendingRegistration', JSON.stringify(registrationData));
 
-        // Redirect to Stripe payment page
-        window.location.href = data.url;
+        setTimeout(() => {
+          window.location.href = data.url;
+        }, 200); // slight delay to ensure storage is written
         return;
       }
 
@@ -392,6 +393,13 @@ const Registration = () => {
               <option value="eindhoven">Eindhoven</option>
             </select>
           </div>
+
+          {/* Show Amstelveen closed message and disable submit if selected */}
+          {formData.eventLocation === 'amstelveen' && (
+            <div className="closed-message" style={{ color: '#800020', fontWeight: 'bold', marginBottom: '1rem' }}>
+              Registrations for Amstelveen Are Now Closed
+            </div>
+          )}
           {formData.eventLocation && (
             <div className="form-group">
               <label htmlFor="programType">Program Type *</label>
@@ -485,7 +493,7 @@ const Registration = () => {
           <button
             type="submit"
             className={`submit-btn ${loading ? 'loading' : ''}`}
-            disabled={loading}
+            disabled={loading || formData.eventLocation === 'amstelveen'}
           >
             {loading ? 'Registering...' : 'Register Now'}
           </button>
