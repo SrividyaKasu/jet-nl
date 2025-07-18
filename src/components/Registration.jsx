@@ -394,10 +394,10 @@ const Registration = () => {
             </select>
           </div>
 
-          {/* Show Amstelveen closed message and disable submit if selected */}
-          {formData.eventLocation === 'amstelveen' && (
+          {/* Show closed message and disable submit if Amstelveen or Denhaag is selected */}
+          {(formData.eventLocation === 'amstelveen' || formData.eventLocation === 'denhaag') && (
             <div className="closed-message" style={{ color: '#800020', fontWeight: 'bold', marginBottom: '1rem' }}>
-              Registrations for Amstelveen Are Now Closed
+              Registrations for {formData.eventLocation.charAt(0).toUpperCase() + formData.eventLocation.slice(1)} Are Now Closed
             </div>
           )}
           {formData.eventLocation && (
@@ -417,12 +417,7 @@ const Registration = () => {
                     {option.label}
                   </option>
                 ))}
-              </select>
-              {formData.programType && formData.programType.toLowerCase().includes('darshan') && (
-                <div className="darshan-message" style={{ color: '#800020', marginTop: '8px', fontWeight: 'bold' }}>
-                  Darshan timings will be communicated in a separate email.
-                </div>
-              )}
+              </select>  
             </div>
           )}
           <div className="form-group">
@@ -493,7 +488,7 @@ const Registration = () => {
           <button
             type="submit"
             className={`submit-btn ${loading ? 'loading' : ''}`}
-            disabled={loading || formData.eventLocation === 'amstelveen'}
+            disabled={loading || formData.eventLocation === 'amstelveen' || formData.eventLocation === 'denhaag'}
           >
             {loading ? 'Registering...' : 'Register Now'}
           </button>
