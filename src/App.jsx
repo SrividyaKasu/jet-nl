@@ -58,7 +58,6 @@ const router = createBrowserRouter(
       {/* Public Pages */}
       <Route path="/" element={<Home />} />
       <Route path="/about" element={<About />} />
-      <Route path="/registration" element={<Registration />} />
       <Route path="/gallery" element={<Gallery />} />
       <Route path="/contribute" element={<DonateForm />} />
       <Route path="/payment-success" element={<PaymentSuccess />} />
